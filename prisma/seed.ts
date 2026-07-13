@@ -213,6 +213,7 @@ async function main() {
       }
       continue;
     }
+    const catId = categoryMap[p.category];
     const product = await prisma.product.create({
       data: {
         title: p.title,
@@ -221,7 +222,7 @@ async function main() {
         price: p.price,
         compareAtPrice: p.compareAtPrice,
         status: "ACTIVE",
-        categoryId: categoryMap[p.category] ?? null,
+        ...(catId ? { category: { connect: { id: catId } } } : {}),
         tags: p.tags,
         inventory: Math.floor(Math.random() * 50) + 10,
       },
