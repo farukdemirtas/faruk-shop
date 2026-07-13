@@ -1,36 +1,136 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Faruk Shop - Premium Kadın Giyim E-Ticaret Platformu
 
-## Getting Started
+Premium, modern ve kadın odaklı tam kapsamlı Next.js e-ticaret platformu. Shopify entegrasyonu, kapsamlı admin paneli ve çarpıcı müşteri arayüzü ile birlikte gelir.
 
-First, run the development server:
+## Özellikler
 
+### Shopify Entegrasyonu
+- Shopify Admin GraphQL API ve Storefront API entegrasyonu
+- Tek tıkla veya toplu ürün senkronizasyonu
+- CSV ve Excel (.xlsx) dosyası içe aktarma
+- Sürükle-bırak görsel yükleme
+- Senkronizasyon geçmişi ve raporlama
+- Webhook desteği (sipariş oluşturma, ürün güncelleme)
+- Otomatik senkronizasyon seçeneği
+
+### Admin Paneli
+- Dashboard (istatistikler, son siparişler, sync durumu)
+- Ürün yönetimi (CRUD, varyantlar, görseller, SEO)
+- Shopify Senkronizasyonu sayfası
+- Siparişler yönetimi
+- Müşteri yönetimi
+- Banner yönetimi
+- Kampanya yönetimi
+- Kupon sistemi
+- Kargo ayarları
+- Ödeme ayarları
+- Shopify API ayarları
+- Kullanıcı yönetimi
+
+### Müşteri Arayüzü
+- Pembe temalı premium tasarım
+- Hero banner + koleksiyonlar
+- Ürün listesi ve detay sayfaları
+- Sepet
+- Responsive ve mobil öncelikli
+- Framer Motion animasyonları
+
+## Teknoloji
+
+- **Framework:** Next.js 15 (App Router)
+- **Veritabanı:** Prisma v7 + PostgreSQL
+- **Auth:** NextAuth v5
+- **UI:** Tailwind CSS v4
+- **Animasyon:** Framer Motion
+- **Import:** papaparse, xlsx
+
+## Kurulum
+
+### 1. Bağımlılıkları Yükle
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Ortam Değişkenleri
+`.env.example` dosyasını `.env` olarak kopyalayın ve değerleri doldurun:
+```bash
+cp .env.example .env
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Doldurulacak değerler:
+```env
+DATABASE_URL="postgresql://postgres:şifre@localhost:5432/faruk_shop"
+NEXTAUTH_SECRET="güçlü-secret-üretin"
+NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN="mağazanız.myshopify.com"
+NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN="..."
+SHOPIFY_ADMIN_ACCESS_TOKEN="shpat_..."
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Veritabanı Kurulumu
 
-## Learn More
+PostgreSQL'de `faruk_shop` veritabanını oluşturun:
+```sql
+CREATE DATABASE faruk_shop;
+```
 
-To learn more about Next.js, take a look at the following resources:
+Migration ve seed:
+```bash
+npm run db:migrate
+npm run db:seed
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Uygulamayı Başlat
+```bash
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Admin Girişi
 
-## Deploy on Vercel
+URL: `http://localhost:3000/admin/login`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Varsayılan bilgiler (seed sonrası):
+- **E-posta:** `admin@farukshop.com`
+- **Şifre:** `admin123`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Üretim ortamında şifreyi değiştirmeyi unutmayın!
+
+## Shopify Ayarları
+
+Admin panelinde **Shopify Ayarları** sayfasına gidin ve şu bilgileri doldurun:
+
+1. **Store URL:** `mağazanız.myshopify.com`
+2. **Storefront Access Token:** Shopify Admin → Settings → Apps → Develop Apps
+3. **Admin API Token:** Shopify Admin → Settings → Apps → Develop Apps → Admin API
+
+## NPM Komutları
+
+```bash
+npm run dev          # Geliştirme sunucusu
+npm run build        # Production build
+npm run db:migrate   # Veritabanı migration
+npm run db:seed      # Örnek veri ekle
+npm run db:studio    # Prisma Studio (veritabanı görselleştirici)
+```
+
+## Proje Yapısı
+
+```
+src/
+├── app/
+│   ├── (store)/          # Müşteri arayüzü
+│   ├── (admin)/admin/    # Admin paneli
+│   └── api/              # API routes
+├── components/
+│   ├── ui/               # Temel UI bileşenleri
+│   ├── store/            # Müşteri arayüzü bileşenleri
+│   └── admin/            # Admin bileşenleri
+├── lib/
+│   ├── shopify/          # Shopify API entegrasyonu
+│   ├── db.ts             # Prisma client
+│   ├── auth.ts           # NextAuth
+│   └── utils.ts
+└── actions/
+    ├── products.ts       # Ürün Server Actions
+    ├── shopify-sync.ts   # Senkronizasyon Actions
+    └── import.ts         # CSV/Excel import Actions
+```
