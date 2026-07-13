@@ -5,11 +5,10 @@ function createPrismaClient() {
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) throw new Error("DATABASE_URL environment variable is not set");
 
-  // Connection pool: max 5 connections, keepalive to avoid SSH tunnel drops
   const adapter = new PrismaPg({
     connectionString: databaseUrl,
-    max: 5,
-    idleTimeoutMillis: 60000,
+    max: process.env.NODE_ENV === "production" ? 5 : 2,
+    idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
   });
 
@@ -23,6 +22,27 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const db = globalForPrisma.prisma ?? createPrismaClient();
+function getPrismaClient(): PrismaClient {
+  const cached = globalForPrisma.prisma;
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+  if (cached && "shopierSettings" in cached) {
+    return cached;
+  }
+
+  if (cached) {
+    void cached.$disconnect().catch(() => {});
+    globalForPrisma.prisma = undefined;
+  }
+
+  const client = createPrismaClient();
+  globalForPrisma.prisma = client;
+  return client;
+}
+
+export const db = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    const client = getPrismaClient();
+    const value = client[prop as keyof PrismaClient];
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+});

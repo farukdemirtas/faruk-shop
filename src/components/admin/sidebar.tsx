@@ -54,10 +54,10 @@ const navItems: NavItem[] = [
   { label: "Kuponlar", href: "/admin/coupons", icon: Ticket },
   { type: "divider", label: "Entegrasyon" },
   {
-    label: "Shopify Sync",
-    href: "/admin/shopify-sync",
+    label: "Shopier Senkronizasyonu",
+    href: "/admin/shopier-sync",
     icon: RefreshCw,
-    badge: "API",
+    badge: "Çek",
   },
   { type: "divider", label: "Sistem" },
   { label: "Kargo", href: "/admin/shipping", icon: Truck },

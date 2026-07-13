@@ -14,6 +14,11 @@ import { importProducts, type ImportRow } from "@/actions/import";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
 import type { SyncHistory } from "@prisma/client";
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminPanel,
+} from "@/components/admin/page-shell";
 
 interface ShopifySyncClientProps {
   stats: {
@@ -123,26 +128,24 @@ export function ShopifySyncClient({ stats, history, isConnected, lastConnectedAt
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Shopify Senkronizasyonu</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Ürünlerinizi Shopify mağazanızla senkronize edin</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={handleTestConnection} loading={testing}>
-            {isConnected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
-            Bağlantıyı Test Et
-          </Button>
-          <Button onClick={handleFullSync} loading={isPending || (syncProgress?.isRunning ?? false)}>
-            <RefreshCw className="w-4 h-4" />
-            Tümünü Senkronize Et
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats */}
+    <AdminPage>
+      <AdminPageHeader
+        section="Entegrasyon"
+        title="Shopify Senkronizasyonu"
+        description="Ürünlerinizi Shopify mağazanızla senkronize edin"
+        actions={
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button variant="outline" onClick={handleTestConnection} loading={testing}>
+              {isConnected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
+              Bağlantıyı Test Et
+            </Button>
+            <Button onClick={handleFullSync} loading={isPending || (syncProgress?.isRunning ?? false)}>
+              <RefreshCw className="w-4 h-4" />
+              Tümünü Senkronize Et
+            </Button>
+          </div>
+        }
+      />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-5">
           <div className="flex items-center gap-3">
@@ -335,6 +338,6 @@ export function ShopifySyncClient({ stats, history, isConnected, lastConnectedAt
           </table>
         </div>
       </Card>
-    </div>
+    </AdminPage>
   );
 }

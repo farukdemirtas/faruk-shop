@@ -166,6 +166,20 @@ async function main() {
   });
   console.log(`Admin user: ${admin.email}`);
 
+  await prisma.shopierSettings.upsert({
+    where: { id: "default-shopier" },
+    update: {
+      storeUsername: "Privatetime",
+      storeUrl: "https://www.shopier.com/Privatetime",
+    },
+    create: {
+      id: "default-shopier",
+      storeUsername: "Privatetime",
+      storeUrl: "https://www.shopier.com/Privatetime",
+    },
+  });
+  console.log("Shopier settings ready.");
+
   // Categories
   const categories = [
     { name: "Babydoll & Gecelik", slug: "babydoll-gecelik" },

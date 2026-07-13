@@ -10,6 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileDropzone, ImagePreviewGrid } from "@/components/ui/file-dropzone";
 import { createProduct } from "@/actions/products";
 import Link from "next/link";
+import {
+  AdminPage,
+  AdminPageHeader,
+} from "@/components/admin/page-shell";
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -103,35 +107,33 @@ export default function NewProductPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link href="/admin/products" className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Yeni Ürün</h1>
-            <p className="text-gray-500 text-sm">Yeni ürün bilgilerini girin</p>
+    <AdminPage>
+      <AdminPageHeader
+        section="Mağaza"
+        title="Yeni Ürün"
+        description="Yeni ürün bilgilerini girin"
+        actions={
+          <div className="flex items-center gap-2">
+            <Link href="/admin/products" className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors">
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+            <Select
+              options={[
+                { value: "DRAFT", label: "Taslak" },
+                { value: "ACTIVE", label: "Aktif" },
+                { value: "ARCHIVED", label: "Arşivlendi" },
+              ]}
+              value={formData.status}
+              onChange={(e) => setFormData((p) => ({ ...p, status: e.target.value as FormStatus }))}
+              className="w-36"
+            />
+            <Button type="submit" form="product-form" loading={isPending}>
+              <Save className="w-4 h-4" />
+              Kaydet
+            </Button>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Select
-            options={[
-              { value: "DRAFT", label: "Taslak" },
-              { value: "ACTIVE", label: "Aktif" },
-              { value: "ARCHIVED", label: "Arşivlendi" },
-            ]}
-            value={formData.status}
-            onChange={(e) => setFormData((p) => ({ ...p, status: e.target.value as FormStatus }))}
-            className="w-36"
-          />
-          <Button type="submit" form="product-form" loading={isPending}>
-            <Save className="w-4 h-4" />
-            Kaydet
-          </Button>
-        </div>
-      </div>
+        }
+      />
 
       <form id="product-form" onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -327,6 +329,6 @@ export default function NewProductPage() {
           </div>
         </div>
       </form>
-    </div>
+    </AdminPage>
   );
 }

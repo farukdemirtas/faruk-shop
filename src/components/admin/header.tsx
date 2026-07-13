@@ -4,7 +4,9 @@ import { Bell, LogOut, User, ExternalLink, Menu } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { getInitials } from "@/lib/utils";
+import { getAdminPageMeta } from "@/lib/admin-nav";
 import { useAdminNav } from "@/components/admin/admin-shell";
 
 interface AdminHeaderProps {
@@ -19,6 +21,9 @@ interface AdminHeaderProps {
 export function AdminHeader({ user, title }: AdminHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { setMobileOpen } = useAdminNav();
+  const pathname = usePathname();
+  const pageMeta = getAdminPageMeta(pathname);
+  const pageTitle = title ?? pageMeta.title;
 
   return (
     <header className="admin-header">
@@ -32,8 +37,8 @@ export function AdminHeader({ user, title }: AdminHeaderProps) {
           <Menu size={20} />
         </button>
         <div>
-          {title && <h1 className="admin-header-title">{title}</h1>}
-          <p className="admin-header-sub">Faruk Shop Admin</p>
+          <h1 className="admin-header-title">{pageTitle}</h1>
+          <p className="admin-header-sub">{pageMeta.section} · {pageMeta.description}</p>
         </div>
       </div>
 

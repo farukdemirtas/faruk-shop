@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus, Search, RefreshCw, Trash2, Upload, Filter } from "lucide-react";
+import { Plus, Search, Trash2, Upload, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge, StatusBadge } from "@/components/ui/badge";
@@ -11,9 +11,13 @@ import { DataTable, Column } from "@/components/ui/data-table";
 import { ConfirmModal } from "@/components/ui/modal";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { deleteProduct } from "@/actions/products";
-import { syncProductToShopify, bulkSyncToShopify } from "@/actions/shopify-sync";
 import type { Prisma } from "@prisma/client";
 import Link from "next/link";
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminToolbar,
+} from "@/components/admin/page-shell";
 
 type ProductWithRelations = Prisma.ProductGetPayload<{
   include: {
@@ -39,7 +43,6 @@ export function ProductsClient({ products, total, pages, page, categories }: Pro
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [syncingId, setSyncingId] = useState<string | null>(null);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -59,30 +62,6 @@ export function ProductsClient({ products, total, pages, page, categories }: Pro
         toast.error(result.error ?? "Ürün silinemedi.");
       }
     });
-  }
-
-  async function handleSync(productId: string) {
-    setSyncingId(productId);
-    const result = await syncProductToShopify(productId);
-    setSyncingId(null);
-    if (result.success) {
-      toast.success("Ürün Shopify'a senkronize edildi.");
-    } else {
-      toast.error(result.error ?? "Senkronizasyon başarısız.");
-    }
-  }
-
-  async function handleBulkSync() {
-    if (selectedIds.length === 0) {
-      toast.error("Lütfen en az bir ürün seçin.");
-      return;
-    }
-    const result = await bulkSyncToShopify(selectedIds);
-    toast.success(`${result.successCount} ürün senkronize edildi.`);
-    if (result.failCount > 0) {
-      toast.error(`${result.failCount} ürün başarısız.`);
-    }
-    setSelectedIds([]);
   }
 
   const columns: Column<ProductWithRelations>[] = [
@@ -132,13 +111,13 @@ export function ProductsClient({ products, total, pages, page, categories }: Pro
       ),
     },
     {
-      key: "shopify",
-      header: "Shopify",
+      key: "shopier",
+      header: "Shopier",
       cell: (p) => (
         p.shopifySynced ? (
-          <Badge variant="success" dot>Senkronize</Badge>
+          <Badge variant="success" dot>Shopier'dan</Badge>
         ) : (
-          <Badge variant="warning" dot>Senkronize Değil</Badge>
+          <Badge variant="warning" dot>Yerel</Badge>
         )
       ),
     },
@@ -154,14 +133,6 @@ export function ProductsClient({ products, total, pages, page, categories }: Pro
       header: "",
       cell: (p) => (
         <div className="flex items-center gap-1 justify-end">
-          <button
-            onClick={() => handleSync(p.id)}
-            disabled={syncingId === p.id}
-            title="Shopify'a Gönder"
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-[#FF4FA3] hover:bg-[#fff0f7] transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 ${syncingId === p.id ? "animate-spin" : ""}`} />
-          </button>
           <Link
             href={`/admin/products/${p.id}/edit`}
             className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"
@@ -183,38 +154,31 @@ export function ProductsClient({ products, total, pages, page, categories }: Pro
   ];
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Ürün Yönetimi</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Toplam {total} ürün</p>
-        </div>
-        <div className="flex items-center gap-2">
-          {selectedIds.length > 0 && (
-            <Button variant="outline" onClick={handleBulkSync}>
-              <RefreshCw className="w-4 h-4" />
-              Seçilileri Senkronize Et ({selectedIds.length})
-            </Button>
-          )}
-          <Link href="/admin/shopify-sync">
-            <Button variant="secondary">
-              <Upload className="w-4 h-4" />
-              Toplu İçe Aktar
-            </Button>
-          </Link>
-          <Link href="/admin/products/new">
-            <Button>
-              <Plus className="w-4 h-4" />
-              Yeni Ürün
-            </Button>
-          </Link>
-        </div>
-      </div>
+    <AdminPage>
+      <AdminPageHeader
+        section="Mağaza"
+        title="Ürünler"
+        description={`Toplam ${total} ürün`}
+        actions={
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link href="/admin/shopier-sync">
+              <Button variant="secondary">
+                <Upload className="w-4 h-4" />
+                Shopier'dan Çek
+              </Button>
+            </Link>
+            <Link href="/admin/products/new">
+              <Button>
+                <Plus className="w-4 h-4" />
+                Yeni Ürün
+              </Button>
+            </Link>
+          </div>
+        }
+      />
 
-      {/* Filters */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-4">
-        <form onSubmit={handleSearch} className="flex items-center gap-3">
+      <AdminToolbar>
+        <form onSubmit={handleSearch} className="flex items-center gap-3 w-full">
           <div className="flex-1">
             <Input
               value={search}
@@ -228,9 +192,7 @@ export function ProductsClient({ products, total, pages, page, categories }: Pro
             Filtrele
           </Button>
         </form>
-      </div>
-
-      {/* Table */}
+      </AdminToolbar>
       <DataTable
         columns={columns}
         data={products}
@@ -253,6 +215,6 @@ export function ProductsClient({ products, total, pages, page, categories }: Pro
         onConfirm={handleDelete}
         loading={isPending}
       />
-    </div>
+    </AdminPage>
   );
 }

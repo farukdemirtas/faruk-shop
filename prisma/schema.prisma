@@ -347,6 +347,20 @@ model ShopifySettings {
   updatedAt          DateTime @updatedAt
 }
 
+model ShopierSettings {
+  id               String    @id @default(cuid())
+  storeUsername    String    @default("Privatetime")
+  storeUrl         String    @default("https://www.shopier.com/Privatetime")
+  patToken         String?
+  autoSync         Boolean   @default(false)
+  isConnected      Boolean   @default(false)
+  lastConnectedAt  DateTime?
+  lastSyncAt       DateTime?
+  lastProductCount Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
 model SyncHistory {
   id            String       @id @default(cuid())
   type          SyncType
@@ -366,6 +380,7 @@ enum SyncType {
   SINGLE
   IMPORT_CSV
   IMPORT_EXCEL
+  SHOPIER_PULL
 }
 
 enum SyncStatus {

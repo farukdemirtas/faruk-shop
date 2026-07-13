@@ -2,8 +2,15 @@ import { db } from "@/lib/db";
 import { StatCard } from "@/components/ui/card";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/badge";
-import { Package, ShoppingCart, Users, RefreshCw, TrendingUp, AlertCircle } from "lucide-react";
+import { Package, ShoppingCart, Users, RefreshCw, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminPanel,
+  AdminPanelHeader,
+  AdminAlert,
+} from "@/components/admin/page-shell";
 
 export const dynamic = "force-dynamic";
 
@@ -46,35 +53,31 @@ async function getDashboardStats() {
 
 export default async function DashboardPage() {
   const stats = await getDashboardStats();
+  const syncPercent = stats.totalProducts > 0
+    ? Math.round((stats.syncedProducts / stats.totalProducts) * 100)
+    : 0;
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 text-sm mt-1">Mağazanıza genel bakış</p>
-      </div>
+    <AdminPage>
+      <AdminPageHeader
+        section="Ana"
+        title="Genel Bakış"
+        description="Mağazanıza genel bakış"
+      />
 
-      {/* Sync Alert */}
       {stats.unsyncedCount > 0 && (
-        <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
-          <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0" />
-          <div className="flex-1">
-            <p className="text-sm font-medium text-amber-800">
-              {stats.unsyncedCount} aktif ürün Shopify ile senkronize edilmemiş
-            </p>
-          </div>
-          <Link
-            href="/admin/shopify-sync"
-            className="text-sm font-medium text-amber-700 hover:text-amber-900 underline"
-          >
-            Senkronize Et
-          </Link>
-        </div>
+        <AdminAlert
+          variant="warning"
+          action={
+            <Link href="/admin/shopier-sync">Ürünleri Çek</Link>
+          }
+        >
+          <AlertCircle size={18} />
+          {stats.unsyncedCount} ürün henüz Shopier'dan aktarılmamış
+        </AdminAlert>
       )}
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="admin-stat-grid">
         <StatCard
           title="Toplam Ürün"
           value={stats.totalProducts}
@@ -83,7 +86,7 @@ export default async function DashboardPage() {
           trend={{ value: 0, label: "bu ay" }}
         />
         <StatCard
-          title="Shopify'da"
+          title="Shopier'dan Aktarılan"
           value={stats.syncedProducts}
           icon={<RefreshCw className="w-6 h-6" />}
           color="green"
@@ -93,7 +96,7 @@ export default async function DashboardPage() {
           value={stats.totalOrders}
           icon={<ShoppingCart className="w-6 h-6" />}
           color="blue"
-          trend={{ value: 0, label: "bu ay" }}
+          trend={{ value: stats.pendingOrders, label: "bekleyen" }}
         />
         <StatCard
           title="Müşteriler"
@@ -103,28 +106,28 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* Bottom Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Orders */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <h2 className="font-semibold text-gray-900">Son Siparişler</h2>
-            <Link href="/admin/orders" className="text-sm text-[#FF4FA3] hover:underline">
-              Tümünü gör
-            </Link>
-          </div>
+      <div className="admin-grid-2">
+        <AdminPanel padded={false}>
+          <AdminPanelHeader
+            title="Son Siparişler"
+            action={
+              <Link href="/admin/orders" className="text-sm text-[#FF4FA3] hover:underline font-medium">
+                Tümünü gör
+              </Link>
+            }
+          />
           <div className="divide-y divide-gray-50">
             {stats.recentOrders.length === 0 ? (
-              <div className="px-6 py-8 text-center text-gray-400 text-sm">Henüz sipariş yok</div>
+              <div className="px-5 py-10 text-center text-gray-400 text-sm">Henüz sipariş yok</div>
             ) : (
               stats.recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between px-6 py-3">
+                <div key={order.id} className="flex items-center justify-between px-5 py-3.5 hover:bg-[#fff0f7]/40 transition-colors">
                   <div>
-                    <p className="text-sm font-medium text-gray-800">#{order.orderNumber}</p>
-                    <p className="text-xs text-gray-400">{order.customer?.firstName ?? order.email}</p>
+                    <p className="text-sm font-semibold text-gray-800">#{order.orderNumber}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{order.customer?.firstName ?? order.email}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-bold text-gray-900">
                       {formatPrice(Number(order.totalAmount))}
                     </p>
                     <StatusBadge status={order.status} />
@@ -133,43 +136,37 @@ export default async function DashboardPage() {
               ))
             )}
           </div>
-        </div>
+        </AdminPanel>
 
-        {/* Sync Status */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-            <h2 className="font-semibold text-gray-900">Shopify Senkronizasyonu</h2>
-            <Link href="/admin/shopify-sync" className="text-sm text-[#FF4FA3] hover:underline">
-              Yönet
-            </Link>
-          </div>
-          <div className="p-6 space-y-4">
+        <AdminPanel padded={false}>
+          <AdminPanelHeader
+            title="Shopier Aktarımı"
+            action={
+              <Link href="/admin/shopier-sync" className="text-sm text-[#FF4FA3] hover:underline font-medium">
+                Yönet
+              </Link>
+            }
+          />
+          <div className="p-5 space-y-4">
             <div className="flex items-center justify-between p-4 bg-[#fff0f7] rounded-xl">
               <div>
-                <p className="text-sm font-medium text-gray-700">Senkronize Edilmiş</p>
-                <p className="text-2xl font-bold text-[#FF4FA3]">{stats.syncedProducts}</p>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Aktarılan</p>
+                <p className="text-2xl font-bold text-[#FF4FA3] mt-0.5">{stats.syncedProducts}</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-gray-500">Toplam Ürün</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalProducts}</p>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Toplam</p>
+                <p className="text-2xl font-bold text-gray-900 mt-0.5">{stats.totalProducts}</p>
               </div>
             </div>
-            {/* Progress */}
             <div>
-              <div className="flex justify-between text-xs text-gray-500 mb-1">
+              <div className="flex justify-between text-xs text-gray-500 mb-1.5">
                 <span>Senkronizasyon oranı</span>
-                <span>
-                  {stats.totalProducts > 0
-                    ? Math.round((stats.syncedProducts / stats.totalProducts) * 100)
-                    : 0}%
-                </span>
+                <span className="font-semibold">{syncPercent}%</span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-2">
                 <div
                   className="bg-[#FF4FA3] rounded-full h-2 transition-all"
-                  style={{
-                    width: `${stats.totalProducts > 0 ? (stats.syncedProducts / stats.totalProducts) * 100 : 0}%`,
-                  }}
+                  style={{ width: `${syncPercent}%` }}
                 />
               </div>
             </div>
@@ -179,8 +176,8 @@ export default async function DashboardPage() {
               </p>
             )}
           </div>
-        </div>
+        </AdminPanel>
       </div>
-    </div>
+    </AdminPage>
   );
 }

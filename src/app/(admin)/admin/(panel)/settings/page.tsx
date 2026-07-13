@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { updateShopifySettings, getShopifySettings, testShopifyConnectionAction } from "@/actions/shopify-sync";
+import {
+  AdminPage,
+  AdminPageHeader,
+} from "@/components/admin/page-shell";
 
 export default function SettingsPage() {
   const [isPending, startTransition] = useTransition();
@@ -63,23 +67,24 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-3xl space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Shopify Ayarları</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Shopify mağaza bağlantı bilgilerini yapılandırın</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleTest} loading={testing}>
-            <Wifi className="w-4 h-4" />
-            Bağlantıyı Test Et
-          </Button>
-          <Button onClick={handleSave} loading={isPending}>
-            <Save className="w-4 h-4" />
-            Kaydet
-          </Button>
-        </div>
-      </div>
+    <AdminPage narrow>
+      <AdminPageHeader
+        section="Sistem"
+        title="Ayarlar"
+        description="Shopify mağaza bağlantı bilgilerini yapılandırın"
+        actions={
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleTest} loading={testing}>
+              <Wifi className="w-4 h-4" />
+              Bağlantıyı Test Et
+            </Button>
+            <Button onClick={handleSave} loading={isPending}>
+              <Save className="w-4 h-4" />
+              Kaydet
+            </Button>
+          </div>
+        }
+      />
 
       {/* API Credentials */}
       <Card>
@@ -175,6 +180,6 @@ export default function SettingsPage() {
           ))}
         </CardContent>
       </Card>
-    </div>
+    </AdminPage>
   );
 }

@@ -1,6 +1,10 @@
 import { db } from "@/lib/db";
 import { formatPrice, formatDate } from "@/lib/utils";
-import Link from "next/link";
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminTable,
+} from "@/components/admin/page-shell";
 
 export const dynamic = "force-dynamic";
 
@@ -35,46 +39,45 @@ export default async function CustomersPage({
   ]);
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Müşteriler</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Toplam {total} müşteri</p>
-      </div>
+    <AdminPage>
+      <AdminPageHeader
+        section="Mağaza"
+        title="Müşteriler"
+        description={`Toplam ${total} müşteri`}
+      />
 
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-100 bg-gray-50/50">
-              {["Müşteri", "E-posta", "Telefon", "Siparişler", "Toplam Harcama", "Kayıt Tarihi"].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {customers.length === 0 ? (
-              <tr><td colSpan={6} className="px-4 py-12 text-center text-gray-400">Müşteri bulunamadı</td></tr>
-            ) : (
-              customers.map((c) => (
-                <tr key={c.id} className="hover:bg-[#fff0f7]/30 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF4FA3] to-[#c2185b] flex items-center justify-center text-white text-xs font-bold">
-                        {c.firstName[0]?.toUpperCase()}
-                      </div>
-                      <p className="font-medium text-gray-900">{c.firstName} {c.lastName}</p>
+      <AdminTable>
+        <thead>
+          <tr>
+            {["Müşteri", "E-posta", "Telefon", "Siparişler", "Toplam Harcama", "Kayıt Tarihi"].map((h) => (
+              <th key={h}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {customers.length === 0 ? (
+            <tr><td colSpan={6} className="text-center text-gray-400 py-12">Müşteri bulunamadı</td></tr>
+          ) : (
+            customers.map((c) => (
+              <tr key={c.id}>
+                <td>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF4FA3] to-[#c2185b] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                      {c.firstName[0]?.toUpperCase()}
                     </div>
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">{c.email}</td>
-                  <td className="px-4 py-3 text-gray-600">{c.phone ?? "-"}</td>
-                  <td className="px-4 py-3 text-gray-600">{c.totalOrders}</td>
-                  <td className="px-4 py-3 font-medium text-gray-900">{formatPrice(Number(c.totalSpent))}</td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(c.createdAt)}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+                    <p className="font-semibold text-gray-900">{c.firstName} {c.lastName}</p>
+                  </div>
+                </td>
+                <td>{c.email}</td>
+                <td>{c.phone ?? "—"}</td>
+                <td>{c.totalOrders}</td>
+                <td className="font-semibold">{formatPrice(Number(c.totalSpent))}</td>
+                <td className="text-xs text-gray-500">{formatDate(c.createdAt)}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </AdminTable>
+    </AdminPage>
   );
 }

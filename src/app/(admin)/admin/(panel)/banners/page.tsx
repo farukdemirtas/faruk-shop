@@ -2,12 +2,17 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit2, Eye, EyeOff } from "lucide-react";
+import { Plus, Trash2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Modal, ConfirmModal } from "@/components/ui/modal";
-import { Input, Textarea } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminEmpty,
+} from "@/components/admin/page-shell";
 
 type Banner = {
   id: string;
@@ -75,26 +80,35 @@ export default function BannersPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Banner Yönetimi</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Ana sayfa banner görsellerini yönetin</p>
-        </div>
-        <Button onClick={() => setEditModal(true)}>
-          <Plus className="w-4 h-4" />
-          Yeni Banner
-        </Button>
-      </div>
+    <AdminPage>
+      <AdminPageHeader
+        section="Pazarlama"
+        title="Bannerlar"
+        description="Ana sayfa banner görsellerini yönetin"
+        actions={
+          <Button onClick={() => setEditModal(true)}>
+            <Plus className="w-4 h-4" />
+            Yeni Banner
+          </Button>
+        }
+      />
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[1, 2].map((i) => <div key={i} className="skeleton h-48 rounded-2xl" />)}
         </div>
       ) : banners.length === 0 ? (
-        <Card className="p-12 text-center text-gray-400">
-          <p>Henüz banner eklenmemiş</p>
-        </Card>
+        <AdminEmpty
+          icon={<Plus size={22} />}
+          title="Henüz banner eklenmemiş"
+          description="Ana sayfa için yeni banner ekleyerek başlayın"
+          action={
+            <Button onClick={() => setEditModal(true)} className="mt-4">
+              <Plus className="w-4 h-4" />
+              İlk Bannerı Ekle
+            </Button>
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {banners.map((b) => (
@@ -160,6 +174,6 @@ export default function BannersPage() {
         confirmLabel="Evet, Sil"
         onConfirm={handleDelete}
       />
-    </div>
+    </AdminPage>
   );
 }
