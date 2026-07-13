@@ -6,24 +6,18 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "Faruk Shop | Premium Kadın Giyim",
+    default: "Faruk Shop | +18 Fantazi İç Giyim",
     template: "%s | Faruk Shop",
   },
-  description: "Premium, modern ve şık kadın giyim mağazası. En güzel koleksiyonları keşfedin.",
-  keywords: ["kadın giyim", "elbise", "moda", "premium", "şık"],
-  openGraph: {
-    type: "website",
-    locale: "tr_TR",
-    siteName: "Faruk Shop",
-  },
+  description: "+18 Premium fantazi iç giyim, babydoll, kostüm ve korse. Gizli paket ile Türkiye geneli kargo.",
+  keywords: ["iç giyim", "babydoll", "fantazi kostüm", "korse", "+18", "gizli paket"],
+  openGraph: { type: "website", locale: "tr_TR", siteName: "Faruk Shop" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
-      <body className={inter.className}>
-        {children}
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

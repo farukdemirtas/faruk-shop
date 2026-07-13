@@ -1,110 +1,163 @@
+"use client";
+
 import Link from "next/link";
-import { Store, Mail, Phone, MapPin, Heart } from "lucide-react";
+import { Mail, Phone, MapPin, Flame, ArrowRight } from "lucide-react";
+
+const collections = [
+  { label: "Babydoll & Gecelik",  href: "/collections/gece-koleksiyonu" },
+  { label: "Fantazi Kostümler",   href: "/collections/fantazi-kostumler" },
+  { label: "Korse & Sütyen",      href: "/collections/saten-dantel" },
+  { label: "Yeni Gelenler",       href: "/collections/yeni-gelenler" },
+  { label: "Tüm Ürünler",         href: "/products" },
+];
+
+const contact = [
+  { icon: Mail,    text: "info@farukshop.com" },
+  { icon: Phone,   text: "0538 611 35 03" },
+  { icon: MapPin,  text: "Samsun, Türkiye" },
+];
 
 export function Footer() {
   return (
-    <footer className="bg-[#1A1A2E] text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+    <footer style={{ width: "100%", background: "#0d0d1a", color: "white" }}>
+      {/* Main grid */}
+      <div className="container" style={{ paddingTop: "4.5rem", paddingBottom: "3rem" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "3rem",
+        }}>
           {/* Brand */}
-          <div className="md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FF4FA3] to-[#c2185b] flex items-center justify-center">
-                <Store className="w-5 h-5 text-white" />
+          <div>
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", marginBottom: "1.2rem" }}>
+              <div style={{
+                width: 38, height: 38, borderRadius: 10,
+                background: "linear-gradient(135deg, #FF4FA3 0%, #c2185b 100%)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 4px 12px rgba(255,79,163,0.3)",
+              }}>
+                <Flame size={18} color="white" />
               </div>
-              <span className="text-xl font-bold">
-                Faruk<span className="text-[#FF4FA3]">Shop</span>
+              <span style={{ fontSize: "1.2rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
+                Faruk<span style={{ color: "#FF4FA3" }}>Shop</span>
               </span>
             </Link>
-            <p className="text-white/50 text-sm leading-relaxed">
-              Premium kadın giyim ve aksesuar. Şıklığı ve kaliteyi bir araya getiriyoruz.
+
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.83rem", lineHeight: 1.7, maxWidth: 220 }}>
+              +18 Fantazi iç giyim ve kostüm. Gizli paket, güvenli ödeme ile kapınıza kadar.
             </p>
-            <div className="flex items-center gap-3 mt-5">
-              {[
-                { icon: Heart, href: "#" },
-                { icon: Mail, href: "#" },
-                { icon: Store, href: "#" },
-              ].map(({ icon: Icon, href }, i) => (
-                <a
-                  key={i}
-                  href={href}
-                  className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/60 hover:bg-[#FF4FA3] hover:text-white transition-all"
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
+
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: "rgba(255,79,163,0.15)",
+              border: "1px solid rgba(255,79,163,0.3)",
+              borderRadius: 99,
+              padding: "5px 14px",
+              marginTop: "1rem",
+              fontSize: "0.72rem",
+              fontWeight: 700,
+              color: "#FF4FA3",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+            }}>
+              +18 Yalnızca Yetişkinler
             </div>
           </div>
 
-          {/* Links */}
+          {/* Koleksiyonlar */}
           <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider mb-4 text-white/80">
+            <h4 style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "rgba(255,255,255,0.5)", marginBottom: "1.2rem" }}>
               Koleksiyonlar
-            </h3>
-            <ul className="space-y-2.5">
-              {["Yeni Gelenler", "Elbiseler", "Üst Giyim", "Alt Giyim", "Aksesuarlar", "İndirimler"].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="text-white/50 hover:text-white text-sm transition-colors">
-                    {item}
+            </h4>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column" as const, gap: "0.6rem" }}>
+              {collections.map(c => (
+                <li key={c.href}>
+                  <Link href={c.href} style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    color: "rgba(255,255,255,0.45)", fontSize: "0.875rem",
+                    textDecoration: "none", transition: "color 0.15s",
+                  }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "#FF4FA3"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.45)"; }}
+                  >
+                    <ArrowRight size={12} /> {c.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* İletişim */}
           <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider mb-4 text-white/80">
-              Müşteri Hizmetleri
-            </h3>
-            <ul className="space-y-2.5">
-              {["Sipariş Takibi", "İade & Değişim", "Boyut Rehberi", "SSS", "İletişim", "Hakkımızda"].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="text-white/50 hover:text-white text-sm transition-colors">
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider mb-4 text-white/80">
+            <h4 style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "rgba(255,255,255,0.5)", marginBottom: "1.2rem" }}>
               İletişim
-            </h3>
-            <ul className="space-y-3">
-              {[
-                { icon: Mail, text: "info@farukshop.com" },
-                { icon: Phone, text: "+90 555 123 45 67" },
-                { icon: MapPin, text: "İstanbul, Türkiye" },
-              ].map(({ icon: Icon, text }, i) => (
-                <li key={i} className="flex items-center gap-2 text-white/50 text-sm">
-                  <Icon className="w-4 h-4 text-[#FF4FA3] flex-shrink-0" />
+            </h4>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column" as const, gap: "0.8rem" }}>
+              {contact.map(({ icon: Icon, text }) => (
+                <li key={text} style={{ display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,0.45)", fontSize: "0.875rem" }}>
+                  <Icon size={14} color="#FF4FA3" style={{ flexShrink: 0 }} />
                   {text}
                 </li>
               ))}
             </ul>
-            <div className="mt-5">
-              <p className="text-xs text-white/30 mb-2">Bültenimize abone ol</p>
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  placeholder="E-posta"
-                  className="flex-1 h-9 px-3 bg-white/10 border border-white/20 rounded-xl text-white text-xs placeholder:text-white/30 focus:outline-none focus:border-[#FF4FA3]"
-                />
-                <button className="h-9 px-3 bg-[#FF4FA3] rounded-xl text-white text-xs hover:bg-[#e6388e] transition-colors">
-                  Abone
-                </button>
-              </div>
+          </div>
+
+          {/* Bülten */}
+          <div>
+            <h4 style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "rgba(255,255,255,0.5)", marginBottom: "1.2rem" }}>
+              Yeni Ürünlerden Haberdar Ol
+            </h4>
+            <p style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.83rem", marginBottom: "1rem" }}>
+              Kampanya ve yeni koleksiyonlardan ilk siz haberdar olun.
+            </p>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <input
+                type="email"
+                placeholder="E-posta adresiniz"
+                style={{
+                  flex: 1, height: 44,
+                  background: "rgba(255,255,255,0.07)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: 10, padding: "0 14px",
+                  color: "white", fontSize: "0.83rem",
+                  outline: "none",
+                }}
+              />
+              <button style={{
+                height: 44, width: 44,
+                background: "linear-gradient(135deg, #FF4FA3 0%, #c2185b 100%)",
+                border: "none", borderRadius: 10,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", flexShrink: 0,
+              }}>
+                <ArrowRight size={16} color="white" />
+              </button>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/30">
-          <p>© 2024 Faruk Shop. Tüm hakları saklıdır.</p>
-          <div className="flex gap-4">
-            <Link href="#" className="hover:text-white/60 transition-colors">Gizlilik Politikası</Link>
-            <Link href="#" className="hover:text-white/60 transition-colors">Kullanım Koşulları</Link>
+      {/* Bottom bar */}
+      <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="container" style={{
+          display: "flex", flexWrap: "wrap" as const,
+          alignItems: "center", justifyContent: "space-between",
+          gap: "0.75rem", paddingTop: "1.2rem", paddingBottom: "1.2rem",
+          fontSize: "0.75rem", color: "rgba(255,255,255,0.25)",
+        }}>
+          <p>
+            © 2024 FarukShop · Tüm hakları saklıdır &nbsp;·&nbsp; Bu site yalnızca{" "}
+            <span style={{ color: "#FF4FA3" }}>18+</span> bireyler içindir
+          </p>
+          <div style={{ display: "flex", gap: "1.5rem" }}>
+            {["Gizlilik Politikası", "Kullanım Koşulları", "18+ Uyarı"].map(l => (
+              <Link key={l} href="#" style={{ color: "rgba(255,255,255,0.25)", textDecoration: "none", transition: "color 0.15s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.6)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.25)"; }}
+              >{l}</Link>
+            ))}
           </div>
         </div>
       </div>

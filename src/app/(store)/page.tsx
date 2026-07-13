@@ -1,160 +1,284 @@
 import { db } from "@/lib/db";
 import { ProductCard } from "@/components/store/product-card";
 import { CopyButton } from "@/components/store/copy-button";
+import { HeroSlider } from "@/components/store/hero-slider";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Truck, Shield, RotateCcw } from "lucide-react";
+import { ArrowRight, Package, Lock, Shield, Truck, Sparkles, RotateCcw, Flame } from "lucide-react";
+
+export const revalidate = 60;
+
+const UNSPLASH = "https://images.unsplash.com";
+
+/* ── Sabit hero slider verileri (DB'de banner yoksa fallback) ── */
+const DEFAULT_SLIDES = [
+  {
+    id: "s1",
+    title: "Yeni Sezon\nFantazi Koleksiyon",
+    subtitle: "Babydoll, korse ve kostüm. Gizli paket ile kapınıza kadar.",
+    image: `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=1600&q=85&auto=format&fit=crop`,
+    link: "/collections/gece-koleksiyonu",
+    buttonText: "Koleksiyonu Keşfet",
+    badge: "2024 Yeni Sezon",
+  },
+  {
+    id: "s2",
+    title: "Fantazi\nKostüm Serisi",
+    subtitle: "Özel roleplay kostümleri. Sınırlı stok, hızlı kargo.",
+    image: `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=1600&q=85&auto=format&fit=crop`,
+    link: "/collections/fantazi-kostumler",
+    buttonText: "İncele",
+    badge: "En Çok Satan",
+  },
+  {
+    id: "s3",
+    title: "Saten & Dantel\nKorse Koleksiyonu",
+    subtitle: "Premium saten ve dantel korse setleri. S'den XL'e tüm bedenler.",
+    image: `${UNSPLASH}/photo-1551489186-cf8726f514f8?w=1600&q=85&auto=format&fit=crop`,
+    link: "/collections/saten-dantel",
+    buttonText: "Alışverişe Başla",
+    badge: "Premium Koleksiyon",
+  },
+];
+
+/* ── Kategori banner grid ── */
+const CATEGORY_BANNERS = [
+  {
+    slug: "gece-koleksiyonu",
+    name: "Babydoll & Gecelik",
+    sub: "Dantel ve saten koleksiyonu",
+    image: `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=800&q=80&auto=format&fit=crop`,
+    tag: "ÇOK SATAN",
+    tagColor: "#FF4FA3",
+  },
+  {
+    slug: "fantazi-kostumler",
+    name: "Fantazi Kostümler",
+    sub: "Roleplay & kostüm serisi",
+    image: `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=800&q=80&auto=format&fit=crop`,
+    tag: "YENİ",
+    tagColor: "#7c3aed",
+  },
+  {
+    slug: "saten-dantel",
+    name: "Korse & Sütyen",
+    sub: "Premium saten & dantel",
+    image: `${UNSPLASH}/photo-1551489186-cf8726f514f8?w=800&q=80&auto=format&fit=crop`,
+    tag: "İNDİRİM",
+    tagColor: "#ef4444",
+  },
+  {
+    slug: "yeni-gelenler",
+    name: "Yeni Gelenler",
+    sub: "Son eklenen ürünler",
+    image: `${UNSPLASH}/photo-1496747611176-843222e1e57c?w=800&q=80&auto=format&fit=crop`,
+    tag: "TAZE",
+    tagColor: "#059669",
+  },
+];
 
 async function getHomeData() {
-  const [banners, featuredProducts, collections] = await Promise.all([
-    db.banner.findMany({ where: { isActive: true }, orderBy: { position: "asc" }, take: 3 }),
+  const [banners, featuredProducts, bestSellers] = await Promise.all([
+    db.banner.findMany({
+      where: { isActive: true },
+      orderBy: { position: "asc" },
+    }),
     db.product.findMany({
       where: { status: "ACTIVE" },
       include: { images: { take: 1, orderBy: { position: "asc" } } },
       orderBy: { createdAt: "desc" },
       take: 8,
     }),
-    db.collection.findMany({ where: { isActive: true }, take: 4 }),
+    db.product.findMany({
+      where: { status: "ACTIVE" },
+      include: { images: { take: 1, orderBy: { position: "asc" } } },
+      orderBy: { createdAt: "asc" },
+      take: 4,
+    }),
   ]);
-
-  return { banners, featuredProducts, collections };
+  return { banners, featuredProducts, bestSellers };
 }
 
 export default async function HomePage() {
-  const { banners, featuredProducts, collections } = await getHomeData();
+  const { banners, featuredProducts, bestSellers } = await getHomeData();
 
-  const mainBanner = banners[0];
+  /* DB bannerlarını slider formatına çevir, yoksa default kullan */
+  const slides =
+    banners.length > 0
+      ? banners.map((b) => ({
+          id: b.id,
+          title: b.title,
+          subtitle: b.subtitle,
+          image: b.image,
+          link: b.link,
+          buttonText: b.buttonText,
+          badge: "+18 Koleksiyon",
+        }))
+      : DEFAULT_SLIDES;
 
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A2E] via-[#16213E] to-[#0f0f23]" />
-        {mainBanner?.image && (
-          <div className="absolute inset-0 opacity-30">
-            <img src={mainBanner.image} alt="" className="w-full h-full object-cover" />
-          </div>
-        )}
-        {/* Decorative circles */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[#FF4FA3] rounded-full opacity-10 blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-[#FFD6E8] rounded-full opacity-10 blur-3xl" />
+    <div style={{ width: "100%" }}>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-[#FF4FA3]" />
-              <span className="text-white/80 text-sm">2024 Yaz Koleksiyonu</span>
-            </div>
-            <h1 className="text-5xl sm:text-6xl font-bold text-white leading-tight">
-              {mainBanner?.title ?? "Premium"}
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF4FA3] to-[#FFD6E8]">
-                Kadın Giyim
-              </span>
-            </h1>
-            <p className="text-white/60 text-lg mt-6 leading-relaxed max-w-lg">
-              {mainBanner?.subtitle ?? "En şık ve kaliteli kadın giyim koleksiyonlarını keşfedin. Her tarza uygun seçenekler."}
-            </p>
-            <div className="flex items-center gap-4 mt-10">
-              <Link
-                href={mainBanner?.link ?? "/collections"}
-                className="inline-flex items-center gap-2 h-12 px-8 bg-[#FF4FA3] text-white rounded-2xl font-semibold hover:bg-[#e6388e] transition-all active:scale-[0.98] shadow-lg shadow-pink-500/30"
-              >
-                {mainBanner?.buttonText ?? "Koleksiyonu Keşfet"}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 h-12 px-6 border border-white/30 text-white rounded-2xl font-medium hover:bg-white/10 transition-colors"
-              >
-                Tüm Ürünler
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ══ 1. HERO SLIDER ════════════════════════════ */}
+      <HeroSlider slides={slides} />
 
-      {/* Features Strip */}
-      <section className="bg-[#FF4FA3] py-4">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-wrap items-center justify-center gap-8 text-white text-sm font-medium">
+      {/* ══ 2. KARGO ŞERİDİ ══════════════════════════ */}
+      <div style={{
+        width: "100%",
+        background: "linear-gradient(90deg, #FF4FA3 0%, #c2185b 100%)",
+        padding: "13px 0",
+      }}>
+        <div className="container">
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "2rem" }}>
             {[
-              { icon: Truck, text: "500₺ Üzeri Ücretsiz Kargo" },
-              { icon: RotateCcw, text: "30 Gün Ücretsiz İade" },
-              { icon: Shield, text: "Güvenli Ödeme" },
-              { icon: Sparkles, text: "Orijinal Ürün Garantisi" },
-            ].map(({ icon: Icon, text }, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <Icon className="w-4 h-4" />
-                <span>{text}</span>
+              { icon: Truck,     text: "600 TL Üzeri Kargo Ücretsiz" },
+              { icon: Package,   text: "Gizli Paket Teslimat" },
+              { icon: RotateCcw, text: "14 Gün İade Hakkı" },
+              { icon: Shield,    text: "Güvenli & Gizli Ödeme" },
+            ].map(({ icon: Icon, text }) => (
+              <div key={text} style={{ display: "flex", alignItems: "center", gap: 7, color: "white", fontSize: "0.8rem", fontWeight: 500 }}>
+                <Icon size={14} />
+                {text}
               </div>
             ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Collections */}
-      {collections.length > 0 && (
-        <section className="py-16 px-4 max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <p className="text-[#FF4FA3] text-sm font-semibold uppercase tracking-wider">Kategoriler</p>
-              <h2 className="text-3xl font-bold text-gray-900 mt-1">Koleksiyonlar</h2>
-            </div>
-            <Link href="/collections" className="text-[#FF4FA3] font-medium text-sm hover:underline flex items-center gap-1">
-              Tümünü Gör <ArrowRight className="w-4 h-4" />
+      {/* ══ 3. KATEGORİ BANNER GRID ══════════════════ */}
+      <section style={{ width: "100%", background: "white", padding: "3rem 0" }}>
+        <div className="container">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.75rem" }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0d0d1a", letterSpacing: "-0.02em" }}>
+              Koleksiyonlar
+            </h2>
+            <Link href="/collections" style={{ display: "flex", alignItems: "center", gap: 5, color: "#FF4FA3", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none" }}>
+              Tümünü Gör <ArrowRight size={14} />
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {collections.map((c) => (
-              <Link
-                key={c.id}
-                href={`/collections/${c.slug}`}
-                className="group relative rounded-2xl overflow-hidden aspect-square bg-gradient-to-br from-[#FFD6E8] to-[#fff0f7] hover:shadow-lg hover:shadow-pink-200 transition-all"
+
+          {/* 2+2 grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.75rem" }} className="banner-grid">
+            {CATEGORY_BANNERS.map((cat) => (
+              <Link key={cat.slug} href={`/collections/${cat.slug}`} style={{
+                position: "relative",
+                borderRadius: 14,
+                overflow: "hidden",
+                aspectRatio: "3/4",
+                display: "block",
+                textDecoration: "none",
+                background: "#1e0a2e",
+              }}
+                className="banner-card"
               >
-                {c.image ? (
-                  <img src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Sparkles className="w-12 h-12 text-[#FF4FA3] opacity-40" />
+                <img
+                  src={cat.image}
+                  alt={cat.name}
+                  style={{
+                    width: "100%", height: "100%",
+                    objectFit: "cover",
+                    opacity: 0.7,
+                    transition: "transform 0.4s ease, opacity 0.3s",
+                  }}
+                  className="banner-img"
+                />
+                <div style={{
+                  position: "absolute", inset: 0,
+                  background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)",
+                }} />
+
+                {/* Etiket */}
+                <div style={{ position: "absolute", top: 12, left: 12 }}>
+                  <span style={{
+                    padding: "3px 10px",
+                    background: cat.tagColor,
+                    color: "white",
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    borderRadius: 99,
+                    letterSpacing: "0.06em",
+                  }}>{cat.tag}</span>
+                </div>
+
+                {/* Yazılar */}
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "1.1rem" }}>
+                  <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "11px", marginBottom: "4px" }}>{cat.sub}</p>
+                  <p style={{ color: "white", fontWeight: 700, fontSize: "0.95rem", lineHeight: 1.2 }}>{cat.name}</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 8, color: "#FF4FA3", fontSize: "12px", fontWeight: 600 }}>
+                    Keşfet <ArrowRight size={12} />
                   </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-white font-bold text-lg">{c.name}</p>
                 </div>
               </Link>
             ))}
           </div>
-        </section>
-      )}
-
-      {/* Featured Products */}
-      <section className="py-16 px-4 max-w-7xl mx-auto">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <p className="text-[#FF4FA3] text-sm font-semibold uppercase tracking-wider">Öne Çıkanlar</p>
-            <h2 className="text-3xl font-bold text-gray-900 mt-1">Yeni Gelenler</h2>
-          </div>
-          <Link href="/products" className="text-[#FF4FA3] font-medium text-sm hover:underline flex items-center gap-1">
-            Tümünü Gör <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
+      </section>
 
-        {featuredProducts.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
-            <p>Henüz ürün eklenmemiş.</p>
-            <Link href="/admin/products" className="text-[#FF4FA3] text-sm mt-2 inline-block hover:underline">
-              Admin paneline git →
+      {/* ══ 4. PROMOSYON BANNER (tam genişlik) ════════ */}
+      <section style={{ width: "100%", position: "relative", overflow: "hidden", background: "#1e0a2e" }}>
+        <div style={{ position: "relative", aspectRatio: "16/5", minHeight: 200, maxHeight: 340 }}>
+          <img
+            src={`${UNSPLASH}/photo-1496747611176-843222e1e57c?w=1600&q=80&auto=format&fit=crop`}
+            alt="Kampanya"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%", opacity: 0.4 }}
+          />
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(90deg, rgba(194,24,91,0.85) 0%, rgba(13,13,26,0.7) 100%)",
+            display: "flex", alignItems: "center",
+          }}>
+            <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1.5rem" }}>
+              <div>
+                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.4rem" }}>
+                  Özel Kampanya
+                </p>
+                <h3 style={{ color: "white", fontSize: "clamp(1.4rem, 3vw, 2.2rem)", fontWeight: 800, letterSpacing: "-0.02em" }}>
+                  İlk Siparişinizde <span style={{ color: "#ffb3d9" }}>%15 İndirim</span>
+                </h3>
+                <p style={{ color: "rgba(255,255,255,0.6)", marginTop: "0.4rem", fontSize: "0.875rem" }}>
+                  YEVA15 kodunu kullanın
+                </p>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: "0.75rem",
+                  background: "rgba(255,255,255,0.12)",
+                  border: "2px dashed rgba(255,255,255,0.4)",
+                  borderRadius: 14, padding: "10px 20px",
+                }}>
+                  <span style={{ fontFamily: "monospace", fontWeight: 800, fontSize: "1.3rem", color: "white", letterSpacing: "0.1em" }}>YEVA15</span>
+                  <CopyButton text="YEVA15" />
+                </div>
+                <Link href="/products" className="btn-outline">
+                  Alışverişe Git <ArrowRight size={15} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ 5. YENİ GELENLER ═════════════════════════ */}
+      <section style={{ width: "100%", background: "#f9fafb", padding: "3.5rem 0" }}>
+        <div className="container">
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
+            <div>
+              <p className="section-label" style={{ marginBottom: "0.4rem" }}>Yeni Ürünler</p>
+              <h2 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#0d0d1a", letterSpacing: "-0.02em" }}>Yeni Gelenler</h2>
+            </div>
+            <Link href="/products" style={{ display: "flex", alignItems: "center", gap: 5, color: "#FF4FA3", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none" }}>
+              Tümünü Gör <ArrowRight size={14} />
             </Link>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {featuredProducts.map((p, i) => (
-              <ProductCard
-                key={p.id}
-                product={{
-                  id: p.id,
-                  title: p.title,
+
+          {featuredProducts.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "3rem 0", color: "#9ca3af" }}>
+              Henüz ürün eklenmemiş.
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
+              {featuredProducts.map((p, i) => (
+                <ProductCard key={p.id} product={{
+                  id: p.id, title: p.title,
                   handle: p.shopifyHandle ?? p.slug,
                   price: p.price.toString(),
                   compareAtPrice: p.compareAtPrice?.toString(),
@@ -162,25 +286,136 @@ export default async function HomePage() {
                   brand: p.brand ?? undefined,
                   isNew: i < 4,
                   isSale: !!(p.compareAtPrice && p.compareAtPrice > p.price),
-                }}
-              />
-            ))}
-          </div>
-        )}
+                }} />
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
-      {/* Banner Strip */}
-      <section className="py-16 bg-gradient-to-r from-[#1A1A2E] to-[#16213E]">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-[#FF4FA3] text-sm font-semibold uppercase tracking-wider mb-3">Özel Teklif</p>
-          <h2 className="text-4xl font-bold text-white mb-4">İlk Siparişinizde %15 İndirim</h2>
-          <p className="text-white/60 mb-8">FARUK15 kupon kodunu kullanın</p>
-          <div className="inline-flex items-center gap-3 bg-white/10 border border-white/20 rounded-2xl px-6 py-3">
-            <span className="text-[#FF4FA3] font-mono font-bold text-xl tracking-widest">FARUK15</span>
-            <CopyButton text="FARUK15" />
+      {/* ══ 6. 2'Lİ BANNER (Yatay) ═══════════════════ */}
+      <section style={{ width: "100%", background: "white", padding: "2.5rem 0" }}>
+        <div className="container">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem" }}>
+            {[
+              {
+                title: "Gece Koleksiyonu",
+                sub: "Babydoll & Gecelik",
+                href: "/collections/gece-koleksiyonu",
+                img: `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=800&q=80&auto=format&fit=crop`,
+                color: "linear-gradient(135deg, #FF4FA3 0%, #c2185b 100%)",
+              },
+              {
+                title: "Kostüm Serisi",
+                sub: "Fantazi & Roleplay",
+                href: "/collections/fantazi-kostumler",
+                img: `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=800&q=80&auto=format&fit=crop`,
+                color: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
+              },
+            ].map((b) => (
+              <Link key={b.href} href={b.href} style={{
+                position: "relative",
+                display: "block",
+                borderRadius: 16,
+                overflow: "hidden",
+                aspectRatio: "2/1",
+                textDecoration: "none",
+                background: "#1e0a2e",
+              }}>
+                <img src={b.img} alt={b.title} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.55, transition: "transform 0.4s, opacity 0.3s" }}
+                  className="banner-img"
+                />
+                <div style={{ position: "absolute", inset: 0, background: b.color, opacity: 0.5 }} />
+                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "flex-end", padding: "1.5rem" }}>
+                  <div>
+                    <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.78rem", marginBottom: "0.3rem" }}>{b.sub}</p>
+                    <p style={{ color: "white", fontWeight: 800, fontSize: "1.3rem" }}>{b.title}</p>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, marginTop: 8, color: "white", fontSize: "0.8rem", fontWeight: 600 }}>
+                      Keşfet <ArrowRight size={13} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* ══ 7. ÇOK SATANLAR ══════════════════════════ */}
+      {bestSellers.length > 0 && (
+        <section style={{ width: "100%", background: "#f9fafb", padding: "3.5rem 0" }}>
+          <div className="container">
+            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
+              <div>
+                <p className="section-label" style={{ marginBottom: "0.4rem" }}>
+                  <Flame size={11} style={{ display: "inline", marginRight: 4 }} />
+                  Çok Satanlar
+                </p>
+                <h2 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#0d0d1a", letterSpacing: "-0.02em" }}>En Çok Satılanlar</h2>
+              </div>
+              <Link href="/products?sort=popular" style={{ display: "flex", alignItems: "center", gap: 5, color: "#FF4FA3", fontSize: "0.85rem", fontWeight: 600, textDecoration: "none" }}>
+                Tümünü Gör <ArrowRight size={14} />
+              </Link>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
+              {bestSellers.map((p) => (
+                <ProductCard key={p.id} product={{
+                  id: p.id, title: p.title,
+                  handle: p.shopifyHandle ?? p.slug,
+                  price: p.price.toString(),
+                  compareAtPrice: p.compareAtPrice?.toString(),
+                  image: p.images[0]?.url,
+                  brand: p.brand ?? undefined,
+                  isSale: !!(p.compareAtPrice && p.compareAtPrice > p.price),
+                }} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ══ 8. NEDEN BİZ ════════════════════════════ */}
+      <section style={{
+        width: "100%",
+        background: "linear-gradient(135deg, #0d0d1a 0%, #1e0a2e 50%, #0d0d1a 100%)",
+        padding: "4.5rem 0",
+      }}>
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <div className="badge-18" style={{ display: "inline-flex", marginBottom: "1rem" }}>
+              <Sparkles size={11} /> Neden Biz?
+            </div>
+            <h2 style={{ fontSize: "2rem", fontWeight: 800, color: "white", letterSpacing: "-0.02em" }}>
+              Güvenli & Gizli Alışveriş
+            </h2>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
+            {[
+              { emoji: "📦", title: "Gizli Paket",        desc: "İçeriği belli olmayan nötr ambalaj. Kimse ne aldığınızı bilmez." },
+              { emoji: "🔒", title: "SSL Güvenli Ödeme",  desc: "256-bit şifreleme. Kart bilgileriniz asla saklanmaz." },
+              { emoji: "🛡️", title: "Gizlilik Garantisi", desc: "KVKK güvencesi altında kişisel veri koruması." },
+              { emoji: "🚚", title: "Hızlı Kargo",         desc: "24-48 saat kargoya verilir. Türkiye geneli kapı teslim." },
+            ].map(({ emoji, title, desc }) => (
+              <div key={title} className="glass" style={{ padding: "1.75rem" }}>
+                <div style={{ fontSize: "2.25rem", marginBottom: "1rem" }}>{emoji}</div>
+                <h3 style={{ color: "white", fontWeight: 700, fontSize: "1rem", marginBottom: "0.5rem" }}>{title}</h3>
+                <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.85rem", lineHeight: 1.65 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "2rem", marginTop: "2.5rem" }}>
+            {["KVKK Uyumlu", "7/24 Destek", "Türkiye Geneli Kargo", "Yasal Güvence"].map(item => (
+              <span key={item} style={{ display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.3)", fontSize: "0.75rem" }}>
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#FF4FA3", display: "inline-block" }} />
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }

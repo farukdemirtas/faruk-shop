@@ -10,93 +10,95 @@ const prisma = new PrismaClient({ adapter });
 
 const UNSPLASH = "https://images.unsplash.com";
 
+// Karanlık/seksi moda stili, fantazi iç giyim temasına uygun koleksiyon görselleri
 const collectionImages: Record<string, string> = {
-  "yaz-koleksiyonu-2024": `${UNSPLASH}/photo-1469334031218-e382a71b716b?w=600&q=80&auto=format&fit=crop`,
-  "kis-koleksiyonu-2024": `${UNSPLASH}/photo-1548048026-5a1a941d93d3?w=600&q=80&auto=format&fit=crop`,
-  "ozel-gunler":          `${UNSPLASH}/photo-1562572159-4efc207f5aff?w=600&q=80&auto=format&fit=crop`,
-  "yeni-gelenler":        `${UNSPLASH}/photo-1509631179647-0177331693ae?w=600&q=80&auto=format&fit=crop`,
+  "gece-koleksiyonu":  `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=600&q=80&auto=format&fit=crop`,
+  "fantazi-kostumler": `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=600&q=80&auto=format&fit=crop`,
+  "saten-dantel":      `${UNSPLASH}/photo-1551489186-cf8726f514f8?w=600&q=80&auto=format&fit=crop`,
+  "yeni-gelenler":     `${UNSPLASH}/photo-1496747611176-843222e1e57c?w=600&q=80&auto=format&fit=crop`,
 };
 
+// +18 Fantazi iç giyim ürünleri — karanlık/seksi tema
 const sampleProducts = [
   {
-    title: "Yazlık Çiçekli Elbise",
-    slug: "yazlik-cicekli-elbise",
+    title: "Siyah Dantel Babydoll Set",
+    slug: "dantel-babydoll-set",
+    price: 649,
+    compareAtPrice: 899,
+    category: "babydoll-gecelik",
+    image: `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=800&q=80&auto=format&fit=crop`,
+    description: "Şeffaf siyah dantel babydoll ve tanga seti. Askılı model, göğüs destekli. S/M/L/XL beden.",
+    tags: ["babydoll", "dantel", "set", "siyah"],
+  },
+  {
+    title: "Kırmızı Saten Gecelik",
+    slug: "saten-ipek-gecelik",
     price: 899,
-    compareAtPrice: 1199,
-    category: "elbise",
-    image: `${UNSPLASH}/photo-1585487000160-6ebfffffc5a0?w=800&q=80&auto=format&fit=crop`,
-    description: "Hafif ve şık yazlık çiçekli elbise. Yaz günleri için mükemmel bir seçim.",
-    tags: ["elbise", "yazlık", "çiçekli"],
-  },
-  {
-    title: "Saten Akşam Elbisesi",
-    slug: "saten-aksam-elbisesi",
-    price: 1499,
     compareAtPrice: null,
-    category: "elbise",
-    image: `${UNSPLASH}/photo-1566174053879-31528523f8ae?w=800&q=80&auto=format&fit=crop`,
-    description: "Özel geceler için tasarlanmış zarif saten elbise.",
-    tags: ["elbise", "saten", "özel gün"],
+    category: "babydoll-gecelik",
+    image: `${UNSPLASH}/photo-1551489186-cf8726f514f8?w=800&q=80&auto=format&fit=crop`,
+    description: "Vücut hattını belirten kırmızı saten mini gecelik. Derin dekolte, ince askılı.",
+    tags: ["gecelik", "saten", "kırmızı", "mini"],
   },
   {
-    title: "Oversize Keten Gömlek",
-    slug: "oversize-keten-gomlek",
+    title: "Dantel Korse & Külot Set",
+    slug: "korse-kulot-set",
+    price: 1199,
+    compareAtPrice: 1599,
+    category: "korse-sutyen",
+    image: `${UNSPLASH}/photo-1496747611176-843222e1e57c?w=800&q=80&auto=format&fit=crop`,
+    description: "Siyah dantel korse ve jartiyer bağlantılı külot seti. Çelik kemikli, 6 renk.",
+    tags: ["korse", "jartiyer", "dantel", "siyah"],
+  },
+  {
+    title: "Hemşire Fantazi Kostümü",
+    slug: "hemsire-kostumu",
+    price: 799,
+    compareAtPrice: 999,
+    category: "fantazi-kostum",
+    image: `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=800&q=80&auto=format&fit=crop`,
+    description: "Mini hemşire kostümü seti. Önlük elbise, kep ve file çorap dahildir. S-XL.",
+    tags: ["kostüm", "hemşire", "fantazi", "roleplay"],
+  },
+  {
+    title: "Siyah Fishnet Vücut Çorabı",
+    slug: "fishnet-takim",
+    price: 449,
+    compareAtPrice: null,
+    category: "corap-aksesuar",
+    image: `${UNSPLASH}/photo-1485518994671-a0b83289c09f?w=800&q=80&auto=format&fit=crop`,
+    description: "Büyük göz fishnet tam vücut çorabı. Siyah ve kırmızı. One-size (38-44).",
+    tags: ["fishnet", "vücut çorabı", "ağ", "siyah"],
+  },
+  {
+    title: "Pembe İpek Sabahlık Robe",
+    slug: "ipek-sabahlik",
+    price: 749,
+    compareAtPrice: 999,
+    category: "babydoll-gecelik",
+    image: `${UNSPLASH}/photo-1509631179647-0177331693ae?w=800&q=80&auto=format&fit=crop`,
+    description: "Uzun ipek sabahlık, kemer bağcıklı. V yaka, derin dekolte. Pembe, siyah, şarap.",
+    tags: ["sabahlık", "robe", "ipek", "pembe"],
+  },
+  {
+    title: "Polis Memuru Kostümü",
+    slug: "polis-memuru-kostumu",
+    price: 849,
+    compareAtPrice: null,
+    category: "fantazi-kostum",
+    image: `${UNSPLASH}/photo-1536243298747-ea8874136d64?w=800&q=80&auto=format&fit=crop`,
+    description: "Mavi mini polis kostümü. Kep, kemer ve kelepçe dahildir. S-XL.",
+    tags: ["kostüm", "polis", "fantazi", "mavi"],
+  },
+  {
+    title: "Kırmızı Dantel Jartiyer Set",
+    slug: "dantel-jartiyer-seti",
     price: 549,
     compareAtPrice: 749,
-    category: "ust-giyim",
-    image: `${UNSPLASH}/photo-1583846783214-7229a91b20ed?w=800&q=80&auto=format&fit=crop`,
-    description: "Rahat kesim keten gömlek. Günlük kullanım için ideal.",
-    tags: ["gömlek", "keten", "oversize"],
-  },
-  {
-    title: "Blazer Ceket",
-    slug: "blazer-ceket",
-    price: 1299,
-    compareAtPrice: 1699,
-    category: "dis-giyim",
-    image: `${UNSPLASH}/photo-1591047139829-d91aecb6caea?w=800&q=80&auto=format&fit=crop`,
-    description: "İş ve günlük yaşam için şık blazer ceket.",
-    tags: ["ceket", "blazer", "ofis"],
-  },
-  {
-    title: "Yüksek Bel Mom Jean",
-    slug: "yuksek-bel-mom-jean",
-    price: 699,
-    compareAtPrice: null,
-    category: "alt-giyim",
-    image: `${UNSPLASH}/photo-1541099649105-f69ad21f3246?w=800&q=80&auto=format&fit=crop`,
-    description: "Trend mom jean, yüksek bel kesim. Her kombine uyar.",
-    tags: ["jean", "kot", "yüksek bel"],
-  },
-  {
-    title: "İpek Bluz",
-    slug: "ipek-bluz",
-    price: 849,
-    compareAtPrice: 1099,
-    category: "ust-giyim",
-    image: `${UNSPLASH}/photo-1515886657613-9f3515b0c78f?w=800&q=80&auto=format&fit=crop`,
-    description: "Yumuşak ipek bluz, ofisten akşam yemeğine kadar her ortama uyar.",
-    tags: ["bluz", "ipek", "şık"],
-  },
-  {
-    title: "Midi Etek",
-    slug: "midi-etek",
-    price: 599,
-    compareAtPrice: null,
-    category: "alt-giyim",
-    image: `${UNSPLASH}/photo-1594938298603-c8148c4b4a5f?w=800&q=80&auto=format&fit=crop`,
-    description: "Şık midi etek, saten kumaş. Özel günler için ideal.",
-    tags: ["etek", "midi", "saten"],
-  },
-  {
-    title: "Trençkot",
-    slug: "trencot",
-    price: 2199,
-    compareAtPrice: 2799,
-    category: "dis-giyim",
-    image: `${UNSPLASH}/photo-1520975954732-35dd22299614?w=800&q=80&auto=format&fit=crop`,
-    description: "Klasik trençkot, her sezonda şıklığını koruyan ikonik parça.",
-    tags: ["trençkot", "dış giyim", "klasik"],
+    category: "corap-aksesuar",
+    image: `${UNSPLASH}/photo-1469334031218-e382a71b716b?w=800&q=80&auto=format&fit=crop`,
+    description: "Dantel jartiyer kemeri + file çorap seti. Kırmızı, siyah, beyaz renk seçeneği.",
+    tags: ["jartiyer", "dantel", "file çorap", "set"],
   },
 ];
 
@@ -120,11 +122,11 @@ async function main() {
 
   // Categories
   const categories = [
-    { name: "Elbise", slug: "elbise" },
-    { name: "Üst Giyim", slug: "ust-giyim" },
-    { name: "Alt Giyim", slug: "alt-giyim" },
-    { name: "Dış Giyim", slug: "dis-giyim" },
-    { name: "Aksesuar", slug: "aksesuar" },
+    { name: "Babydoll & Gecelik", slug: "babydoll-gecelik" },
+    { name: "Fantazi Kostüm", slug: "fantazi-kostum" },
+    { name: "Korse & Sütyen", slug: "korse-sutyen" },
+    { name: "Çorap & Aksesuar", slug: "corap-aksesuar" },
+    { name: "İç Çamaşırı Set", slug: "ic-camasiri-set" },
   ];
   for (const cat of categories) {
     await prisma.category.upsert({
@@ -137,10 +139,10 @@ async function main() {
 
   // Collections with Unsplash images
   const collections = [
-    { name: "Yaz Koleksiyonu 2024", slug: "yaz-koleksiyonu-2024" },
-    { name: "Kış Koleksiyonu 2024", slug: "kis-koleksiyonu-2024" },
-    { name: "Özel Günler", slug: "ozel-gunler" },
-    { name: "Yeni Gelenler", slug: "yeni-gelenler" },
+    { name: "🌙 Gece Koleksiyonu", slug: "gece-koleksiyonu" },
+    { name: "🎭 Fantazi Kostümler", slug: "fantazi-kostumler" },
+    { name: "✨ Korse & Dantel", slug: "saten-dantel" },
+    { name: "🆕 Yeni Gelenler", slug: "yeni-gelenler" },
   ];
   for (const col of collections) {
     await prisma.collection.upsert({
@@ -169,29 +171,54 @@ async function main() {
     },
   });
 
-  // Banner with Unsplash image
-  const existingBanner = await prisma.banner.findFirst({ where: { isActive: true } });
-  if (existingBanner) {
-    await prisma.banner.update({
-      where: { id: existingBanner.id },
-      data: {
-        image: `${UNSPLASH}/photo-1483985988355-763728e1935b?w=1600&q=80&auto=format&fit=crop`,
-      },
-    });
-  } else {
+  // Hero slider banners — 3 slide
+  await prisma.banner.deleteMany({});
+  const heroBanners = [
+    {
+      title: "Yeni Sezon Fantazi Koleksiyon",
+      subtitle: "Babydoll, korse ve kostüm. Gizli paket ile kapınıza kadar.",
+      image: `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=1600&q=80&auto=format&fit=crop`,
+      buttonText: "Koleksiyonu Keşfet",
+      link: "/collections/gece-koleksiyonu",
+      position: 0,
+    },
+    {
+      title: "Fantazi Kostüm Serisi",
+      subtitle: "Özel roleplay kostümleri. Sınırlı stok, hızlı kargo.",
+      image: `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=1600&q=80&auto=format&fit=crop`,
+      buttonText: "İncele",
+      link: "/collections/fantazi-kostumler",
+      position: 1,
+    },
+    {
+      title: "Saten & Dantel Korse Koleksiyonu",
+      subtitle: "Premium saten ve dantel korse setleri. S'den XL'e tüm bedenler.",
+      image: `${UNSPLASH}/photo-1551489186-cf8726f514f8?w=1600&q=80&auto=format&fit=crop`,
+      buttonText: "Alışverişe Başla",
+      link: "/collections/saten-dantel",
+      position: 2,
+    },
+  ];
+  for (const b of heroBanners) {
     await prisma.banner.create({
-      data: {
-        title: "2024 Yeni Koleksiyon",
-        subtitle: "Premium kadın giyimde yeni sezon ürünleri şimdi burada",
-        image: `${UNSPLASH}/photo-1483985988355-763728e1935b?w=1600&q=80&auto=format&fit=crop`,
-        buttonText: "Koleksiyonu Keşfet",
-        link: "/collections/yeni-gelenler",
-        isActive: true,
-        position: 0,
-      },
+      data: { ...b, isActive: true, startDate: new Date(), endDate: new Date("2099-01-01") },
     });
   }
-  console.log("Banner with image ready.");
+  console.log("3 hero banners created.");
+
+  // Cleanup: deactivate old products that don't belong to new categories
+  const newSlugs = sampleProducts.map((p) => p.slug);
+  const oldProducts = await prisma.product.findMany({
+    where: { slug: { notIn: newSlugs } },
+    select: { id: true },
+  });
+  if (oldProducts.length > 0) {
+    await prisma.product.updateMany({
+      where: { id: { in: oldProducts.map((p) => p.id) } },
+      data: { status: "DRAFT" },
+    });
+    console.log(`Deactivated ${oldProducts.length} old products.`);
+  }
 
   // Sample products
   const categoryMap: Record<string, string> = {};
@@ -203,10 +230,16 @@ async function main() {
     if (existing) {
       await prisma.product.update({
         where: { id: existing.id },
-        data: { status: "ACTIVE" },
+        data: { status: "ACTIVE", title: p.title, description: p.description, tags: p.tags },
       });
+      // Always update the first image URL
       const existingImg = await prisma.productImage.findFirst({ where: { productId: existing.id } });
-      if (!existingImg) {
+      if (existingImg) {
+        await prisma.productImage.update({
+          where: { id: existingImg.id },
+          data: { url: p.image, altText: p.title },
+        });
+      } else {
         await prisma.productImage.create({
           data: { productId: existing.id, url: p.image, altText: p.title, position: 0 },
         });
