@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { ProductCard } from "@/components/store/product-card";
 import { SlidersHorizontal, Sparkles, Grid3X3, Tag } from "lucide-react";
+import { PageHeaderBanner } from "@/components/store/page-header-banner";
+import { BANNER_IMAGES } from "@/lib/banner-images";
 
 export const revalidate = 60;
 
@@ -89,23 +91,21 @@ export default async function ProductsPage({
   return (
     <div style={{ width: "100%" }}>
       {/* Header */}
-      <div style={{ width: "100%", background: "linear-gradient(135deg, #0d0d1a 0%, #2d0a1f 100%)", padding: "3.5rem 0 2.5rem" }}>
-        <div className="container">
+      <PageHeaderBanner image={BANNER_IMAGES.pageHeader.products}>
           <span className="badge-18" style={{ display: "inline-flex", marginBottom: "1rem" }}>
             <Sparkles size={11} /> +18 Koleksiyon
           </span>
-          <h1 style={{ fontSize: "2.25rem", fontWeight: 800, color: "white", letterSpacing: "-0.02em", marginBottom: "0.4rem" }}>
+          <h1 className="page-header-title" style={{ fontSize: "2.25rem", fontWeight: 800, color: "white", letterSpacing: "-0.02em", marginBottom: "0.4rem" }}>
             Tüm Ürünler
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>
+          <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.875rem" }}>
             Fantazi iç giyim, babydoll, kostüm ve korse
           </p>
-        </div>
-      </div>
+      </PageHeaderBanner>
 
       <div className="container" style={{ paddingTop: "2rem", paddingBottom: "3rem" }}>
         {/* Top bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+        <div className="products-top-bar flex flex-wrap items-center justify-between gap-3 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Grid3X3 className="w-4 h-4" />
             <span>
@@ -120,7 +120,7 @@ export default async function ProductsPage({
               )}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="products-sort flex items-center gap-2">
             <SlidersHorizontal className="w-4 h-4 text-gray-400" />
             <span className="text-sm text-gray-500 mr-1">Sırala:</span>
             {[
@@ -143,46 +143,53 @@ export default async function ProductsPage({
           </div>
         </div>
 
-        <div className="flex gap-7">
+        <div className="products-layout" style={{ display: "flex", gap: "1.75rem", alignItems: "flex-start" }}>
           {/* ── Sidebar ── */}
-          <aside className="w-56 flex-shrink-0 hidden lg:block">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style={{ position: "sticky", top: "100px" }}>
-              {/* Categories */}
-              <div className="p-5">
-                <h3 className="font-bold text-gray-900 mb-3 text-xs uppercase tracking-widest flex items-center gap-2">
-                  <Tag className="w-3.5 h-3.5 text-[#FF4FA3]" />
-                  Kategoriler
-                </h3>
-                <ul className="space-y-0.5">
+          <aside className="products-sidebar" style={{ width: 220, flexShrink: 0 }}>
+            <div style={{
+              position: "sticky", top: "100px",
+              background: "linear-gradient(160deg, #13132b 0%, #1e0a2e 100%)",
+              borderRadius: 18,
+              border: "1px solid rgba(255,79,163,0.15)",
+              overflow: "hidden",
+            }}>
+
+              {/* ── Kategoriler ── */}
+              <div style={{ padding: "1.25rem 1.25rem 1rem" }}>
+                <p style={{
+                  fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em",
+                  textTransform: "uppercase", color: "rgba(255,79,163,0.8)",
+                  display: "flex", alignItems: "center", gap: 6, marginBottom: "0.75rem",
+                }}>
+                  <Tag size={11} /> Kategoriler
+                </p>
+                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 2 }}>
                   <li>
-                    <a
-                      href={buildUrl({ category: null, page: null })}
-                      className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                        !params.category
-                          ? "bg-[#FF4FA3] text-white"
-                          : "text-gray-600 hover:bg-[#fff0f7] hover:text-[#FF4FA3]"
-                      }`}
-                    >
+                    <a href={buildUrl({ category: null, page: null })} style={{
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "8px 12px", borderRadius: 10,
+                      fontSize: "0.82rem", fontWeight: 500, textDecoration: "none",
+                      background: !params.category ? "linear-gradient(135deg,#FF4FA3,#c2185b)" : "transparent",
+                      color: !params.category ? "white" : "rgba(255,255,255,0.55)",
+                      transition: "all 0.15s",
+                    }}>
                       <span>Tümü</span>
-                      <span
-                        className={`text-xs px-1.5 py-0.5 rounded-md ${
-                          !params.category ? "bg-white/25 text-white" : "bg-gray-100 text-gray-500"
-                        }`}
-                      >
-                        {total}
-                      </span>
+                      <span style={{
+                        fontSize: "10px", padding: "1px 7px", borderRadius: 99,
+                        background: !params.category ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.08)",
+                        color: !params.category ? "white" : "rgba(255,255,255,0.4)",
+                      }}>{total}</span>
                     </a>
                   </li>
                   {categories.map((c) => (
                     <li key={c.id}>
-                      <a
-                        href={buildUrl({ category: c.slug, page: null })}
-                        className={`block px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                          params.category === c.slug
-                            ? "bg-[#FF4FA3] text-white"
-                            : "text-gray-600 hover:bg-[#fff0f7] hover:text-[#FF4FA3]"
-                        }`}
-                      >
+                      <a href={buildUrl({ category: c.slug, page: null })} style={{
+                        display: "block", padding: "8px 12px", borderRadius: 10,
+                        fontSize: "0.82rem", fontWeight: 500, textDecoration: "none",
+                        background: params.category === c.slug ? "linear-gradient(135deg,#FF4FA3,#c2185b)" : "transparent",
+                        color: params.category === c.slug ? "white" : "rgba(255,255,255,0.55)",
+                        transition: "all 0.15s",
+                      }}>
                         {c.name}
                       </a>
                     </li>
@@ -190,15 +197,19 @@ export default async function ProductsPage({
                 </ul>
               </div>
 
-              <div className="h-px bg-gray-100 mx-5" />
+              {/* Divider */}
+              <div style={{ height: 1, background: "rgba(255,79,163,0.12)", margin: "0 1.25rem" }} />
 
-              {/* Price filter */}
-              <div className="p-5">
-                <h3 className="font-bold text-gray-900 mb-3 text-xs uppercase tracking-widest flex items-center gap-2">
-                  <span className="text-[#FF4FA3]">₺</span>
-                  Fiyat Aralığı
-                </h3>
-                <ul className="space-y-0.5">
+              {/* ── Fiyat ── */}
+              <div style={{ padding: "1rem 1.25rem" }}>
+                <p style={{
+                  fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em",
+                  textTransform: "uppercase", color: "rgba(255,79,163,0.8)",
+                  marginBottom: "0.75rem",
+                }}>
+                  ₺ Fiyat Aralığı
+                </p>
+                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 2 }}>
                   {priceRanges.map((r) => {
                     const href = buildUrl({
                       minPrice: r.min !== null ? String(r.min) : null,
@@ -211,14 +222,13 @@ export default async function ProductsPage({
                         String(r.max ?? "") === (params.maxPrice ?? ""));
                     return (
                       <li key={r.label}>
-                        <a
-                          href={href}
-                          className={`block px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                            active
-                              ? "bg-[#FF4FA3] text-white"
-                              : "text-gray-600 hover:bg-[#fff0f7] hover:text-[#FF4FA3]"
-                          }`}
-                        >
+                        <a href={href} style={{
+                          display: "block", padding: "8px 12px", borderRadius: 10,
+                          fontSize: "0.82rem", fontWeight: 500, textDecoration: "none",
+                          background: active ? "linear-gradient(135deg,#FF4FA3,#c2185b)" : "transparent",
+                          color: active ? "white" : "rgba(255,255,255,0.55)",
+                          transition: "all 0.15s",
+                        }}>
                           {r.label}
                         </a>
                       </li>
@@ -227,25 +237,33 @@ export default async function ProductsPage({
                 </ul>
               </div>
 
-              <div className="h-px bg-gray-100 mx-5" />
+              {/* Divider */}
+              <div style={{ height: 1, background: "rgba(255,79,163,0.12)", margin: "0 1.25rem" }} />
 
-              {/* Quick collections */}
-              <div className="p-5">
-                <h3 className="font-bold text-gray-900 mb-3 text-xs uppercase tracking-widest">
+              {/* ── Koleksiyonlar ── */}
+              <div style={{ padding: "1rem 1.25rem 1.25rem" }}>
+                <p style={{
+                  fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em",
+                  textTransform: "uppercase", color: "rgba(255,79,163,0.8)", marginBottom: "0.75rem",
+                }}>
                   Koleksiyonlar
-                </h3>
-                <ul className="space-y-0.5">
+                </p>
+                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 2 }}>
                   {[
-                    { name: "🌙 Gece", href: "/collections/gece-koleksiyonu" },
-                    { name: "🎭 Kostümler", href: "/collections/fantazi-kostumler" },
-                    { name: "✨ Saten & Dantel", href: "/collections/saten-dantel" },
-                    { name: "🆕 Yeni Gelenler", href: "/collections/yeni-gelenler" },
-                  ].map(({ name, href }) => (
+                    { emoji: "🌙", name: "Gece",          href: "/collections/gece-koleksiyonu" },
+                    { emoji: "🎭", name: "Kostümler",      href: "/collections/fantazi-kostumler" },
+                    { emoji: "✨", name: "Saten & Dantel", href: "/collections/saten-dantel" },
+                    { emoji: "🆕", name: "Yeni Gelenler",  href: "/collections/yeni-gelenler" },
+                  ].map(({ emoji, name, href }) => (
                     <li key={name}>
-                      <a
-                        href={href}
-                        className="block px-3 py-2 rounded-xl text-sm text-gray-600 hover:bg-[#fff0f7] hover:text-[#FF4FA3] transition-colors"
-                      >
+                      <a href={href} style={{
+                        display: "flex", alignItems: "center", gap: 8,
+                        padding: "8px 12px", borderRadius: 10,
+                        fontSize: "0.82rem", textDecoration: "none",
+                        color: "rgba(255,255,255,0.5)",
+                        transition: "all 0.15s",
+                      }}>
+                        <span style={{ fontSize: "14px" }}>{emoji}</span>
                         {name}
                       </a>
                     </li>

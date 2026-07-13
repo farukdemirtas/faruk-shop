@@ -22,7 +22,7 @@ export function Footer() {
     <footer style={{ width: "100%", background: "#0d0d1a", color: "white" }}>
       {/* Main grid */}
       <div className="container" style={{ paddingTop: "4.5rem", paddingBottom: "3rem" }}>
-        <div style={{
+        <div className="footer-grid" style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
           gap: "3rem",
@@ -141,14 +141,14 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-        <div className="container" style={{
+        <div className="container footer-bottom" style={{
           display: "flex", flexWrap: "wrap" as const,
           alignItems: "center", justifyContent: "space-between",
           gap: "0.75rem", paddingTop: "1.2rem", paddingBottom: "1.2rem",
           fontSize: "0.75rem", color: "rgba(255,255,255,0.25)",
         }}>
           <p>
-            © 2024 FarukShop · Tüm hakları saklıdır &nbsp;·&nbsp; Bu site yalnızca{" "}
+            © 2026 FarukShop · Tüm hakları saklıdır &nbsp;·&nbsp; Bu site yalnızca{" "}
             <span style={{ color: "#FF4FA3" }}>18+</span> bireyler içindir
           </p>
           <div style={{ display: "flex", gap: "1.5rem" }}>

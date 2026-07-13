@@ -1,13 +1,13 @@
 import { db } from "@/lib/db";
 import { ProductCard } from "@/components/store/product-card";
-import { CopyButton } from "@/components/store/copy-button";
+import { BANNER_IMAGES, COLLECTION_BANNER_FALLBACK } from "@/lib/banner-images";
+import { getAllCollectionCoverImages } from "@/lib/collection-images";
+
 import { HeroSlider } from "@/components/store/hero-slider";
 import Link from "next/link";
 import { ArrowRight, Package, Lock, Shield, Truck, Sparkles, RotateCcw, Flame } from "lucide-react";
 
 export const revalidate = 60;
-
-const UNSPLASH = "https://images.unsplash.com";
 
 /* ── Sabit hero slider verileri (DB'de banner yoksa fallback) ── */
 const DEFAULT_SLIDES = [
@@ -15,16 +15,16 @@ const DEFAULT_SLIDES = [
     id: "s1",
     title: "Yeni Sezon\nFantazi Koleksiyon",
     subtitle: "Babydoll, korse ve kostüm. Gizli paket ile kapınıza kadar.",
-    image: `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=1600&q=85&auto=format&fit=crop`,
+    image: BANNER_IMAGES.hero.gece,
     link: "/collections/gece-koleksiyonu",
     buttonText: "Koleksiyonu Keşfet",
-    badge: "2024 Yeni Sezon",
+    badge: "2026 Yeni Sezon",
   },
   {
     id: "s2",
     title: "Fantazi\nKostüm Serisi",
     subtitle: "Özel roleplay kostümleri. Sınırlı stok, hızlı kargo.",
-    image: `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=1600&q=85&auto=format&fit=crop`,
+    image: BANNER_IMAGES.hero.kostum,
     link: "/collections/fantazi-kostumler",
     buttonText: "İncele",
     badge: "En Çok Satan",
@@ -33,51 +33,23 @@ const DEFAULT_SLIDES = [
     id: "s3",
     title: "Saten & Dantel\nKorse Koleksiyonu",
     subtitle: "Premium saten ve dantel korse setleri. S'den XL'e tüm bedenler.",
-    image: `${UNSPLASH}/photo-1551489186-cf8726f514f8?w=1600&q=85&auto=format&fit=crop`,
+    image: BANNER_IMAGES.hero.korse,
     link: "/collections/saten-dantel",
     buttonText: "Alışverişe Başla",
     badge: "Premium Koleksiyon",
   },
 ];
 
-/* ── Kategori banner grid ── */
-const CATEGORY_BANNERS = [
-  {
-    slug: "gece-koleksiyonu",
-    name: "Babydoll & Gecelik",
-    sub: "Dantel ve saten koleksiyonu",
-    image: `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=800&q=80&auto=format&fit=crop`,
-    tag: "ÇOK SATAN",
-    tagColor: "#FF4FA3",
-  },
-  {
-    slug: "fantazi-kostumler",
-    name: "Fantazi Kostümler",
-    sub: "Roleplay & kostüm serisi",
-    image: `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=800&q=80&auto=format&fit=crop`,
-    tag: "YENİ",
-    tagColor: "#7c3aed",
-  },
-  {
-    slug: "saten-dantel",
-    name: "Korse & Sütyen",
-    sub: "Premium saten & dantel",
-    image: `${UNSPLASH}/photo-1551489186-cf8726f514f8?w=800&q=80&auto=format&fit=crop`,
-    tag: "İNDİRİM",
-    tagColor: "#ef4444",
-  },
-  {
-    slug: "yeni-gelenler",
-    name: "Yeni Gelenler",
-    sub: "Son eklenen ürünler",
-    image: `${UNSPLASH}/photo-1496747611176-843222e1e57c?w=800&q=80&auto=format&fit=crop`,
-    tag: "TAZE",
-    tagColor: "#059669",
-  },
-];
+/* ── Kategori banner grid (görseller runtime'da ürünlerden doldurulur) ── */
+const CATEGORY_BANNER_META = [
+  { slug: "gece-koleksiyonu", name: "Babydoll & Gecelik", sub: "Dantel ve saten koleksiyonu", tag: "ÇOK SATAN", tagColor: "#FF4FA3" },
+  { slug: "fantazi-kostumler", name: "Fantazi Kostümler", sub: "Roleplay & kostüm serisi", tag: "YENİ", tagColor: "#7c3aed" },
+  { slug: "saten-dantel", name: "Korse & Sütyen", sub: "Premium saten & dantel", tag: "İNDİRİM", tagColor: "#ef4444" },
+  { slug: "yeni-gelenler", name: "Yeni Gelenler", sub: "Son eklenen ürünler", tag: "TAZE", tagColor: "#059669" },
+] as const;
 
 async function getHomeData() {
-  const [banners, featuredProducts, bestSellers] = await Promise.all([
+  const [banners, featuredProducts, bestSellers, collectionCovers] = await Promise.all([
     db.banner.findMany({
       where: { isActive: true },
       orderBy: { position: "asc" },
@@ -94,12 +66,18 @@ async function getHomeData() {
       orderBy: { createdAt: "asc" },
       take: 4,
     }),
+    getAllCollectionCoverImages(800),
   ]);
-  return { banners, featuredProducts, bestSellers };
+  return { banners, featuredProducts, bestSellers, collectionCovers };
 }
 
 export default async function HomePage() {
-  const { banners, featuredProducts, bestSellers } = await getHomeData();
+  const { banners, featuredProducts, bestSellers, collectionCovers } = await getHomeData();
+
+  const categoryBanners = CATEGORY_BANNER_META.map((cat) => ({
+    ...cat,
+    image: collectionCovers[cat.slug] ?? COLLECTION_BANNER_FALLBACK[cat.slug],
+  }));
 
   /* DB bannerlarını slider formatına çevir, yoksa default kullan */
   const slides =
@@ -128,7 +106,7 @@ export default async function HomePage() {
         padding: "13px 0",
       }}>
         <div className="container">
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "2rem" }}>
+          <div className="features-strip" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "2rem" }}>
             {[
               { icon: Truck,     text: "600 TL Üzeri Kargo Ücretsiz" },
               { icon: Package,   text: "Gizli Paket Teslimat" },
@@ -145,9 +123,9 @@ export default async function HomePage() {
       </div>
 
       {/* ══ 3. KATEGORİ BANNER GRID ══════════════════ */}
-      <section style={{ width: "100%", background: "white", padding: "3rem 0" }}>
+      <section className="section-pad" style={{ width: "100%", background: "white", padding: "3rem 0" }}>
         <div className="container">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.75rem" }}>
+          <div className="section-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.75rem" }}>
             <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0d0d1a", letterSpacing: "-0.02em" }}>
               Koleksiyonlar
             </h2>
@@ -158,7 +136,7 @@ export default async function HomePage() {
 
           {/* 2+2 grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.75rem" }} className="banner-grid">
-            {CATEGORY_BANNERS.map((cat) => (
+            {categoryBanners.map((cat) => (
               <Link key={cat.slug} href={`/collections/${cat.slug}`} style={{
                 position: "relative",
                 borderRadius: 14,
@@ -176,14 +154,14 @@ export default async function HomePage() {
                   style={{
                     width: "100%", height: "100%",
                     objectFit: "cover",
-                    opacity: 0.7,
+                    opacity: 0.82,
                     transition: "transform 0.4s ease, opacity 0.3s",
                   }}
                   className="banner-img"
                 />
                 <div style={{
                   position: "absolute", inset: 0,
-                  background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)",
+                  background: "linear-gradient(to top, rgba(13,13,26,0.92) 0%, rgba(45,10,31,0.35) 55%, rgba(255,79,163,0.08) 100%)",
                 }} />
 
                 {/* Etiket */}
@@ -213,50 +191,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ══ 4. PROMOSYON BANNER (tam genişlik) ════════ */}
-      <section style={{ width: "100%", position: "relative", overflow: "hidden", background: "#1e0a2e" }}>
-        <div style={{ position: "relative", aspectRatio: "16/5", minHeight: 200, maxHeight: 340 }}>
-          <img
-            src={`${UNSPLASH}/photo-1496747611176-843222e1e57c?w=1600&q=80&auto=format&fit=crop`}
-            alt="Kampanya"
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%", opacity: 0.4 }}
-          />
-          <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(90deg, rgba(194,24,91,0.85) 0%, rgba(13,13,26,0.7) 100%)",
-            display: "flex", alignItems: "center",
-          }}>
-            <div className="container" style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "1.5rem" }}>
-              <div>
-                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.4rem" }}>
-                  Özel Kampanya
-                </p>
-                <h3 style={{ color: "white", fontSize: "clamp(1.4rem, 3vw, 2.2rem)", fontWeight: 800, letterSpacing: "-0.02em" }}>
-                  İlk Siparişinizde <span style={{ color: "#ffb3d9" }}>%15 İndirim</span>
-                </h3>
-                <p style={{ color: "rgba(255,255,255,0.6)", marginTop: "0.4rem", fontSize: "0.875rem" }}>
-                  YEVA15 kodunu kullanın
-                </p>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
-                <div style={{
-                  display: "inline-flex", alignItems: "center", gap: "0.75rem",
-                  background: "rgba(255,255,255,0.12)",
-                  border: "2px dashed rgba(255,255,255,0.4)",
-                  borderRadius: 14, padding: "10px 20px",
-                }}>
-                  <span style={{ fontFamily: "monospace", fontWeight: 800, fontSize: "1.3rem", color: "white", letterSpacing: "0.1em" }}>YEVA15</span>
-                  <CopyButton text="YEVA15" />
-                </div>
-                <Link href="/products" className="btn-outline">
-                  Alışverişe Git <ArrowRight size={15} />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ══ 5. YENİ GELENLER ═════════════════════════ */}
       <section style={{ width: "100%", background: "#f9fafb", padding: "3.5rem 0" }}>
         <div className="container">
@@ -275,7 +209,7 @@ export default async function HomePage() {
               Henüz ürün eklenmemiş.
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
+            <div className="product-grid-home" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
               {featuredProducts.map((p, i) => (
                 <ProductCard key={p.id} product={{
                   id: p.id, title: p.title,
@@ -296,20 +230,20 @@ export default async function HomePage() {
       {/* ══ 6. 2'Lİ BANNER (Yatay) ═══════════════════ */}
       <section style={{ width: "100%", background: "white", padding: "2.5rem 0" }}>
         <div className="container">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem" }}>
+          <div className="dual-banner-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem" }}>
             {[
               {
                 title: "Gece Koleksiyonu",
                 sub: "Babydoll & Gecelik",
                 href: "/collections/gece-koleksiyonu",
-                img: `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=800&q=80&auto=format&fit=crop`,
+                img: collectionCovers["gece-koleksiyonu"] ?? BANNER_IMAGES.dual.gece,
                 color: "linear-gradient(135deg, #FF4FA3 0%, #c2185b 100%)",
               },
               {
                 title: "Kostüm Serisi",
                 sub: "Fantazi & Roleplay",
                 href: "/collections/fantazi-kostumler",
-                img: `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=800&q=80&auto=format&fit=crop`,
+                img: collectionCovers["fantazi-kostumler"] ?? BANNER_IMAGES.dual.kostum,
                 color: "linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)",
               },
             ].map((b) => (
@@ -322,7 +256,7 @@ export default async function HomePage() {
                 textDecoration: "none",
                 background: "#1e0a2e",
               }}>
-                <img src={b.img} alt={b.title} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.55, transition: "transform 0.4s, opacity 0.3s" }}
+                <img src={b.img} alt={b.title} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.65, transition: "transform 0.4s, opacity 0.3s" }}
                   className="banner-img"
                 />
                 <div style={{ position: "absolute", inset: 0, background: b.color, opacity: 0.5 }} />
@@ -357,7 +291,7 @@ export default async function HomePage() {
                 Tümünü Gör <ArrowRight size={14} />
               </Link>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
+            <div className="product-grid-home" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
               {bestSellers.map((p) => (
                 <ProductCard key={p.id} product={{
                   id: p.id, title: p.title,
@@ -390,7 +324,7 @@ export default async function HomePage() {
             </h2>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
+          <div className="why-us-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
             {[
               { emoji: "📦", title: "Gizli Paket",        desc: "İçeriği belli olmayan nötr ambalaj. Kimse ne aldığınızı bilmez." },
               { emoji: "🔒", title: "SSL Güvenli Ödeme",  desc: "256-bit şifreleme. Kart bilgileriniz asla saklanmaz." },

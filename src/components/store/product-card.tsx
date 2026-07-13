@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Heart, ShoppingBag } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { useState } from "react";
+import { useWishlist } from "@/lib/wishlist-context";
 
 export interface ProductCardData {
   id: string;
@@ -23,7 +24,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, className }: ProductCardProps) {
-  const [wishlisted, setWishlisted] = useState(false);
+  const { toggle, has } = useWishlist();
+  const wishlisted = has(product.id);
   const [added, setAdded] = useState(false);
   const [hovered, setHovered] = useState(false);
 
@@ -100,7 +102,8 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
           {/* Wishlist */}
           <button
-            onClick={(e) => { e.preventDefault(); setWishlisted(!wishlisted); }}
+            className="product-card-wishlist"
+            onClick={(e) => { e.preventDefault(); toggle({ id: product.id, title: product.title, handle: product.handle ?? product.id, price: Number(product.price), compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null, image: product.image, brand: product.brand }); }}
             style={{
               position: "absolute", top: 10, right: 10,
               width: 34, height: 34,
@@ -120,7 +123,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           </button>
 
           {/* Add to cart */}
-          <div style={{
+          <div className="product-card-add" style={{
             position: "absolute", bottom: 10, left: 10, right: 10,
             opacity: hovered ? 1 : 0,
             transform: hovered ? "translateY(0)" : "translateY(8px)",

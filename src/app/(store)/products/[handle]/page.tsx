@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, notFound } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ShoppingBag, Heart, Share2, Truck, RotateCcw, Shield, Package, ChevronRight, Check, Minus, Plus } from "lucide-react";
+import { ShoppingBag, Heart, Share2, Truck, RotateCcw, Shield, Package, ChevronRight, Check, Minus, Plus, Sparkles, Copy, CheckCheck } from "lucide-react";
+import { ProductCard, ProductCardData } from "@/components/store/product-card";
 
 /* ── formatPrice yardımcısı (utils import yerine inline) ── */
 function fmt(n: number) {
@@ -21,6 +22,7 @@ interface Product {
   category?: { name: string; slug: string } | null;
   images: Img[];
   variants: Variant[];
+  related?: ProductCardData[];
 }
 
 export default function ProductDetailPage() {
@@ -33,6 +35,8 @@ export default function ProductDetailPage() {
   const [qty, setQty] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const [added, setAdded] = useState(false);
+  const [shared, setShared] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
 
   useEffect(() => {
     fetch(`/api/products/${handle}`)
@@ -67,13 +71,33 @@ export default function ProductDetailPage() {
     setAdded(false);
   }
 
+  async function handleShare() {
+    const url = window.location.href;
+    const title = product?.title ?? "Ürün";
+    /* Web Share API — mobil cihazlarda paylaşım menüsü açar */
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text: `${title} - FarukShop`, url });
+        return;
+      } catch {}
+    }
+    /* Masaüstü fallback — linki kopyala */
+    try {
+      await navigator.clipboard.writeText(url);
+      setShared(true);
+      setTimeout(() => setShared(false), 2000);
+    } catch {
+      setShowShareMenu(v => !v);
+    }
+  }
+
   return (
     <div style={{ width: "100%", background: "#f9fafb", paddingBottom: "4rem" }}>
 
       {/* ── Breadcrumb ── */}
       <div style={{ background: "white", borderBottom: "1px solid #f3f4f6", padding: "12px 0" }}>
         <div className="container">
-          <nav style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "0.78rem", color: "#9ca3af" }}>
+          <nav className="product-breadcrumb" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "0.78rem", color: "#9ca3af" }}>
             <Link href="/" style={{ color: "#9ca3af", textDecoration: "none" }}>Ana Sayfa</Link>
             <ChevronRight size={12} />
             <Link href="/products" style={{ color: "#9ca3af", textDecoration: "none" }}>Ürünler</Link>
@@ -173,7 +197,7 @@ export default function ProductDetailPage() {
                   {product.brand}
                 </p>
               )}
-              <h1 style={{ fontSize: "1.9rem", fontWeight: 800, color: "#0d0d1a", lineHeight: 1.2, letterSpacing: "-0.02em" }}>
+              <h1 className="product-detail-title" style={{ fontSize: "1.9rem", fontWeight: 800, color: "#0d0d1a", lineHeight: 1.2, letterSpacing: "-0.02em" }}>
                 {product.title}
               </h1>
               {product.category && (
@@ -184,7 +208,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Fiyat */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "1.2rem", background: "white", borderRadius: 16, border: "1px solid #f3f4f6" }}>
+            <div className="product-price-box" style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "1.2rem", background: "white", borderRadius: 16, border: "1px solid #f3f4f6" }}>
               <span style={{ fontSize: "2.2rem", fontWeight: 800, color: "#FF4FA3" }}>
                 {fmt(product.price)}
               </span>
@@ -269,7 +293,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Sepete Ekle */}
-            <div style={{ display: "flex", gap: "0.75rem" }}>
+            <div className="product-actions" style={{ display: "flex", gap: "0.75rem" }}>
               <button
                 onClick={handleAddToCart}
                 style={{
@@ -299,15 +323,56 @@ export default function ProductDetailPage() {
               >
                 <Heart size={20} fill={wishlisted ? "#FF4FA3" : "none"} color={wishlisted ? "#FF4FA3" : "#6b7280"} />
               </button>
-              <button style={{
-                width: 56, height: 56,
-                border: "2px solid #e5e7eb",
-                background: "white", borderRadius: 16, cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                transition: "all 0.15s",
-              }}>
-                <Share2 size={20} color="#6b7280" />
-              </button>
+              {/* Paylaş */}
+              <div style={{ position: "relative" }}>
+                <button
+                  onClick={handleShare}
+                  title="Paylaş"
+                  style={{
+                    width: 56, height: 56,
+                    border: `2px solid ${shared ? "#22c55e" : "#e5e7eb"}`,
+                    background: shared ? "#f0fdf4" : "white",
+                    borderRadius: 16, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.2s",
+                  }}>
+                  {shared
+                    ? <CheckCheck size={20} color="#22c55e" />
+                    : <Share2 size={20} color="#6b7280" />
+                  }
+                </button>
+
+                {/* Fallback dropdown — kopyalandı bildirimi */}
+                {showShareMenu && (
+                  <div style={{
+                    position: "absolute", bottom: "calc(100% + 8px)", right: 0,
+                    background: "white", borderRadius: 12,
+                    border: "1px solid #e5e7eb",
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                    padding: "0.5rem",
+                    minWidth: 180, zIndex: 20,
+                  }}>
+                    {[
+                      { label: "Linki Kopyala", action: async () => { await navigator.clipboard.writeText(window.location.href); setShowShareMenu(false); setShared(true); setTimeout(() => setShared(false), 2000); } },
+                      { label: "WhatsApp'ta Paylaş", action: () => { window.open(`https://wa.me/?text=${encodeURIComponent(window.location.href)}`, "_blank"); setShowShareMenu(false); } },
+                      { label: "Twitter'da Paylaş",   action: () => { window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(product?.title ?? "")}`, "_blank"); setShowShareMenu(false); } },
+                    ].map(({ label, action }) => (
+                      <button key={label} onClick={action} style={{
+                        display: "flex", alignItems: "center", gap: 8,
+                        width: "100%", padding: "9px 12px", background: "none",
+                        border: "none", borderRadius: 8, cursor: "pointer",
+                        fontSize: "0.83rem", color: "#374151", textAlign: "left",
+                        transition: "background 0.1s",
+                      }}
+                        onMouseEnter={e => (e.currentTarget.style.background = "#f9fafb")}
+                        onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Özellikler */}
@@ -364,19 +429,41 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {/* ── Mobil için responsive stil ── */}
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @media (max-width: 768px) {
-          .product-detail-grid {
-            grid-template-columns: 1fr !important;
-            gap: 1.5rem !important;
-          }
-          .product-detail-grid > div:first-child {
-            position: static !important;
-          }
-        }
-      `}</style>
+      {/* ── Benzer Ürünler ── */}
+      {product.related && product.related.length > 0 && (
+        <section style={{ width: "100%", background: "#f9fafb", padding: "3rem 0", borderTop: "1px solid #f3f4f6" }}>
+          <div className="container">
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.75rem" }}>
+              <Sparkles size={16} color="#FF4FA3" />
+              <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0d0d1a", letterSpacing: "-0.02em" }}>
+                Benzer Ürünler
+                {product.category && (
+                  <span style={{ fontSize: "0.85rem", fontWeight: 500, color: "#9ca3af", marginLeft: 8 }}>
+                    — {product.category.name}
+                  </span>
+                )}
+              </h2>
+              {product.category && (
+                <Link href={`/collections/${product.category.slug}`} style={{
+                  marginLeft: "auto", fontSize: "0.82rem", color: "#FF4FA3",
+                  fontWeight: 600, textDecoration: "none",
+                  display: "flex", alignItems: "center", gap: 4,
+                }}>
+                  Tümünü Gör <ChevronRight size={14} />
+                </Link>
+              )}
+            </div>
+            <div className="product-grid-home" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
+              {product.related.map(r => (
+                <ProductCard key={r.id} product={r} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Spin animasyonu */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

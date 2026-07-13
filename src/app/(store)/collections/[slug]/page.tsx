@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { ProductCard } from "@/components/store/product-card";
 import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
+import { PageHeaderBanner } from "@/components/store/page-header-banner";
+import { getCollectionHeaderImage, toBannerImage } from "@/lib/collection-images";
 
 export const revalidate = 60;
 
@@ -60,31 +62,34 @@ export default async function CollectionPage({
     take: 48,
   });
 
+  const headerImage =
+    (products[0]?.images[0]?.url
+      ? toBannerImage(products[0].images[0].url, 1600, "entropy")
+      : null) ??
+    (await getCollectionHeaderImage(slug));
+
   return (
     <div style={{ width: "100%" }}>
-      {/* Header */}
-      <div
-        style={{ width: "100%", background: "linear-gradient(135deg, #1A1A2E 0%, #2d0a1f 100%)" }}
-        className="py-14"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link
-            href="/collections"
-            className="inline-flex items-center gap-2 text-white/50 hover:text-white text-sm mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Tüm Koleksiyonlar
+      <PageHeaderBanner image={headerImage}>
+          <Link href="/collections" style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            color: "rgba(255,255,255,0.55)", fontSize: "0.82rem",
+            textDecoration: "none", marginBottom: "1.25rem",
+          }}>
+            <ArrowLeft size={14} /> Tüm Koleksiyonlar
           </Link>
-          <div className="inline-flex items-center gap-2 bg-[#FF4FA3]/20 border border-[#FF4FA3]/30 rounded-full px-4 py-1.5 mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#FF4FA3]" />
-            <span className="text-[#FF4FA3] text-xs font-semibold uppercase tracking-wider">+18 Koleksiyon</span>
+          <div style={{ marginBottom: "0.75rem" }}>
+            <span className="badge-18" style={{ display: "inline-flex" }}>
+              <Sparkles size={11} /> +18 Koleksiyon
+            </span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">{title}</h1>
-          {desc && <p className="text-white/50 text-lg">{desc}</p>}
-        </div>
-      </div>
+          <h1 className="page-header-title" style={{ fontSize: "2.25rem", fontWeight: 800, color: "white", letterSpacing: "-0.02em", marginBottom: "0.4rem" }}>
+            {title}
+          </h1>
+          {desc && <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.95rem" }}>{desc}</p>}
+      </PageHeaderBanner>
 
-      <div style={{ width: "100%" }} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="container" style={{ paddingTop: "2rem", paddingBottom: "3rem" }}>
         {products.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-16 h-16 rounded-2xl bg-[#fff0f7] flex items-center justify-center mx-auto mb-4">
@@ -104,7 +109,7 @@ export default async function CollectionPage({
             <p className="text-gray-500 text-sm mb-6">
               <strong className="text-gray-900">{products.length}</strong> ürün bulundu
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="collections-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {products.map((p, i) => (
                 <ProductCard
                   key={p.id}

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -12,6 +12,12 @@ export const metadata: Metadata = {
   description: "+18 Premium fantazi iç giyim, babydoll, kostüm ve korse. Gizli paket ile Türkiye geneli kargo.",
   keywords: ["iç giyim", "babydoll", "fantazi kostüm", "korse", "+18", "gizli paket"],
   openGraph: { type: "website", locale: "tr_TR", siteName: "Faruk Shop" },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

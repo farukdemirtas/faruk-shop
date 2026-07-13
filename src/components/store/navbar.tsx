@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, Flame, Search, Heart } from "lucide-react";
+import { useWishlist } from "@/lib/wishlist-context";
+import { SearchModal } from "@/components/store/search-modal";
 
 const links = [
   { label: "Ana Sayfa",         href: "/" },
@@ -17,7 +19,9 @@ const links = [
 export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const pathname = usePathname();
+  const { count: wishlistCount } = useWishlist();
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -30,7 +34,7 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
   return (
     <>
       {/* +18 uyarı şeridi */}
-      <div style={{
+      <div className="top-warning-bar" style={{
         width: "100%",
         background: "linear-gradient(90deg, #0d0d1a 0%, #1e1e3a 50%, #0d0d1a 100%)",
         borderBottom: "1px solid rgba(255,79,163,0.2)",
@@ -46,11 +50,16 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
         left: 0,
         zIndex: 60,
       }}>
-        ⚠ Bu site yalnızca +18 bireyler içindir &nbsp;·&nbsp; Gizli Paket &nbsp;·&nbsp; Güvenli Ödeme &nbsp;·&nbsp; Türkiye Geneli Kargo
+        <span className="top-bar-full">
+          ⚠ Bu site yalnızca +18 bireyler içindir &nbsp;·&nbsp; Gizli Paket &nbsp;·&nbsp; Güvenli Ödeme &nbsp;·&nbsp; Türkiye Geneli Kargo
+        </span>
+        <span className="top-bar-short">
+          ⚠ +18 &nbsp;·&nbsp; Gizli Paket &nbsp;·&nbsp; Güvenli Ödeme
+        </span>
       </div>
 
       {/* Ana nav */}
-      <nav style={{
+      <nav className="store-nav" style={{
         position: "fixed",
         top: "33px",
         left: 0,
@@ -78,7 +87,7 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
             }}>
               <Flame size={18} color="white" />
             </div>
-            <span style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0d0d1a", letterSpacing: "-0.02em" }}>
+            <span className="nav-logo-text" style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0d0d1a", letterSpacing: "-0.02em" }}>
               Faruk<span style={{ color: "#FF4FA3" }}>Shop</span>
             </span>
           </Link>
@@ -107,23 +116,37 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
 
           {/* Actions */}
           <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-            {[Search, Heart].map((Icon, i) => (
-              <button key={i} style={{
-                width: 38, height: 38,
-                borderRadius: 10,
-                border: "none",
-                background: "transparent",
-                color: "#6b7280",
-                cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                transition: "all 0.15s",
-              }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#fff0f7"; (e.currentTarget as HTMLButtonElement).style.color = "#FF4FA3"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "#6b7280"; }}
-              >
-                <Icon size={19} />
-              </button>
-            ))}
+            {/* Arama */}
+            <button onClick={() => setSearchOpen(true)} style={{
+              width: 38, height: 38, borderRadius: 10, border: "none",
+              background: "transparent", color: "#6b7280", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "#fff0f7"; (e.currentTarget as HTMLButtonElement).style.color = "#FF4FA3"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "#6b7280"; }}
+            >
+              <Search size={19} />
+            </button>
+
+            {/* Favoriler */}
+            <Link href="/favorites" style={{
+              position: "relative", width: 38, height: 38, borderRadius: 10,
+              background: "transparent", color: wishlistCount > 0 ? "#FF4FA3" : "#6b7280",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              textDecoration: "none", transition: "all 0.15s",
+            }}>
+              <Heart size={19} fill={wishlistCount > 0 ? "#FF4FA3" : "none"} />
+              {wishlistCount > 0 && (
+                <span style={{
+                  position: "absolute", top: 2, right: 2,
+                  width: 16, height: 16,
+                  background: "#FF4FA3", color: "white",
+                  fontSize: "9px", fontWeight: 700,
+                  borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>{wishlistCount}</span>
+              )}
+            </Link>
             <Link href="/cart" style={{
               position: "relative",
               width: 38, height: 38,
@@ -198,6 +221,8 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
           </div>
         )}
       </nav>
+
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

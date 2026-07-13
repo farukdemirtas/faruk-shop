@@ -1,15 +1,19 @@
 import { Navbar } from "@/components/store/navbar";
 import { Footer } from "@/components/store/footer";
+import { WhatsAppButton } from "@/components/store/whatsapp-button";
+import { WishlistProvider } from "@/lib/wishlist-context";
 import { Toaster } from "sonner";
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="page-wrapper">
-      <Navbar />
-      {/* pt-[93px] = 33px uyarı şeridi + 60px navbar */}
-      <main style={{ flex: 1, paddingTop: "93px" }}>{children}</main>
-      <Footer />
-      <Toaster position="bottom-right" richColors />
-    </div>
+    <WishlistProvider>
+      <div className="page-wrapper">
+        <Navbar />
+        <main className="main-content" style={{ flex: 1 }}>{children}</main>
+        <Footer />
+        <WhatsAppButton />
+        <Toaster position="top-right" richColors />
+      </div>
+    </WishlistProvider>
   );
 }

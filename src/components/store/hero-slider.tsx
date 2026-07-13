@@ -49,7 +49,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
       background: "#0d0d1a",
     }}>
       {/* Slides */}
-      <div style={{ position: "relative", aspectRatio: "21/9", minHeight: 320, maxHeight: 620 }}>
+      <div className="hero-slide-container" style={{ position: "relative", height: "65vh", minHeight: 380, maxHeight: 600 }}>
         {slides.map((s, i) => (
           <div key={s.id} style={{
             position: "absolute", inset: 0,
@@ -62,10 +62,14 @@ export function HeroSlider({ slides }: HeroSliderProps) {
               alt={s.title}
               style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
             />
-            {/* Overlay gradient */}
+            {/* Overlay — koyu + pembe ton, site paletiyle uyumlu */}
             <div style={{
               position: "absolute", inset: 0,
-              background: "linear-gradient(90deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 50%, transparent 100%)",
+              background: "linear-gradient(90deg, rgba(13,13,26,0.88) 0%, rgba(45,10,31,0.55) 45%, rgba(13,13,26,0.4) 75%, rgba(13,13,26,0.65) 100%)",
+            }} />
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "radial-gradient(ellipse at 15% 60%, rgba(255,79,163,0.15) 0%, transparent 55%)",
             }} />
 
             {/* Content */}
@@ -80,7 +84,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                       {s.badge}
                     </span>
                   )}
-                  <h2 style={{
+                  <h2 className="hero-title" style={{
                     fontSize: "clamp(1.8rem, 4vw, 3.5rem)",
                     fontWeight: 800,
                     color: "white",
@@ -92,18 +96,20 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                     {s.title}
                   </h2>
                   {s.subtitle && (
-                    <p style={{
+                    <p className="hero-subtitle" style={{
                       color: "rgba(255,255,255,0.7)",
                       fontSize: "1rem",
-                      marginBottom: "1.75rem",
+                      marginBottom: "1.5rem",
                       lineHeight: 1.6,
                     }}>
                       {s.subtitle}
                     </p>
                   )}
-                  <Link href={s.link ?? "/products"} className="btn-primary">
-                    {s.buttonText ?? "Alışverişe Başla"} <ArrowRight size={16} />
-                  </Link>
+                  <div className="hero-buttons" style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                    <Link href={s.link ?? "/products"} className="btn-primary">
+                      {s.buttonText ?? "Alışverişe Başla"} <ArrowRight size={16} />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -113,7 +119,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
         {/* Arrows */}
         {slides.length > 1 && (
           <>
-            <button onClick={prev} style={{
+            <button onClick={prev} className="hero-arrow" style={{
               position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)",
               width: 42, height: 42, borderRadius: "50%",
               background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
@@ -125,7 +131,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             }}>
               <ChevronLeft size={20} />
             </button>
-            <button onClick={next} style={{
+            <button onClick={next} className="hero-arrow hero-arrow-right" style={{
               position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)",
               width: 42, height: 42, borderRadius: "50%",
               background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)",
