@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { ProductCard } from "@/components/store/product-card";
+import { CopyButton } from "@/components/store/copy-button";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Truck, Shield, RotateCcw } from "lucide-react";
 
@@ -176,12 +177,7 @@ export default async function HomePage() {
           <p className="text-white/60 mb-8">FARUK15 kupon kodunu kullanın</p>
           <div className="inline-flex items-center gap-3 bg-white/10 border border-white/20 rounded-2xl px-6 py-3">
             <span className="text-[#FF4FA3] font-mono font-bold text-xl tracking-widest">FARUK15</span>
-            <button
-              className="text-white/60 hover:text-white text-sm"
-              onClick={() => navigator?.clipboard?.writeText("FARUK15")}
-            >
-              Kopyala
-            </button>
+            <CopyButton text="FARUK15" />
           </div>
         </div>
       </section>
