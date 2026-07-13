@@ -226,7 +226,7 @@ export default async function HomePage() {
             background: "linear-gradient(90deg, rgba(194,24,91,0.85) 0%, rgba(13,13,26,0.7) 100%)",
             display: "flex", alignItems: "center",
           }}>
-            <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1.5rem" }}>
+            <div className="container" style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "1.5rem" }}>
               <div>
                 <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.4rem" }}>
                   Özel Kampanya
@@ -238,7 +238,7 @@ export default async function HomePage() {
                   YEVA15 kodunu kullanın
                 </p>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
                 <div style={{
                   display: "inline-flex", alignItems: "center", gap: "0.75rem",
                   background: "rgba(255,255,255,0.12)",

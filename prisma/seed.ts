@@ -18,7 +18,7 @@ const collectionImages: Record<string, string> = {
   "yeni-gelenler":     `${UNSPLASH}/photo-1496747611176-843222e1e57c?w=600&q=80&auto=format&fit=crop`,
 };
 
-// +18 Fantazi iç giyim ürünleri — karanlık/seksi tema
+// +18 Fantazi iç giyim ürünleri — her ürün görseli ürün adıyla uyumlu
 const sampleProducts = [
   {
     title: "Siyah Dantel Babydoll Set",
@@ -26,7 +26,8 @@ const sampleProducts = [
     price: 649,
     compareAtPrice: 899,
     category: "babydoll-gecelik",
-    image: `${UNSPLASH}/photo-1529139574466-a303027c1d8b?w=800&q=80&auto=format&fit=crop`,
+    // Siyah dantel iç giyim, babydoll stili — karanlık arka plan, zarif poz
+    image: `${UNSPLASH}/photo-1617922001439-4a2e6562f328?w=800&q=85&auto=format&fit=crop`,
     description: "Şeffaf siyah dantel babydoll ve tanga seti. Askılı model, göğüs destekli. S/M/L/XL beden.",
     tags: ["babydoll", "dantel", "set", "siyah"],
   },
@@ -36,7 +37,8 @@ const sampleProducts = [
     price: 899,
     compareAtPrice: null,
     category: "babydoll-gecelik",
-    image: `${UNSPLASH}/photo-1551489186-cf8726f514f8?w=800&q=80&auto=format&fit=crop`,
+    // Kırmızı/bordo kadın elbisesi — saten doku, seksi kesim
+    image: `${UNSPLASH}/photo-1583744946564-b52d01a7b321?w=800&q=85&auto=format&fit=crop`,
     description: "Vücut hattını belirten kırmızı saten mini gecelik. Derin dekolte, ince askılı.",
     tags: ["gecelik", "saten", "kırmızı", "mini"],
   },
@@ -46,7 +48,8 @@ const sampleProducts = [
     price: 1199,
     compareAtPrice: 1599,
     category: "korse-sutyen",
-    image: `${UNSPLASH}/photo-1496747611176-843222e1e57c?w=800&q=80&auto=format&fit=crop`,
+    // Siyah korse / iç giyim editorial fotoğraf
+    image: `${UNSPLASH}/photo-1594938298603-c8148c4b4087?w=800&q=85&auto=format&fit=crop`,
     description: "Siyah dantel korse ve jartiyer bağlantılı külot seti. Çelik kemikli, 6 renk.",
     tags: ["korse", "jartiyer", "dantel", "siyah"],
   },
@@ -56,7 +59,8 @@ const sampleProducts = [
     price: 799,
     compareAtPrice: 999,
     category: "fantazi-kostum",
-    image: `${UNSPLASH}/photo-1485231183945-fffde7ea051a?w=800&q=80&auto=format&fit=crop`,
+    // Beyaz mini elbise / costume temalı moda fotoğrafı
+    image: `${UNSPLASH}/photo-1559181567-c3190ca9d223?w=800&q=85&auto=format&fit=crop`,
     description: "Mini hemşire kostümü seti. Önlük elbise, kep ve file çorap dahildir. S-XL.",
     tags: ["kostüm", "hemşire", "fantazi", "roleplay"],
   },
@@ -66,7 +70,8 @@ const sampleProducts = [
     price: 449,
     compareAtPrice: null,
     category: "corap-aksesuar",
-    image: `${UNSPLASH}/photo-1485518994671-a0b83289c09f?w=800&q=80&auto=format&fit=crop`,
+    // Karanlık zemin, ağ çorap / fishnet aksesuar temalı fotoğraf
+    image: `${UNSPLASH}/photo-1515886657613-9f3515b0c78f?w=800&q=85&auto=format&fit=crop`,
     description: "Büyük göz fishnet tam vücut çorabı. Siyah ve kırmızı. One-size (38-44).",
     tags: ["fishnet", "vücut çorabı", "ağ", "siyah"],
   },
@@ -76,19 +81,21 @@ const sampleProducts = [
     price: 749,
     compareAtPrice: 999,
     category: "babydoll-gecelik",
-    image: `${UNSPLASH}/photo-1509631179647-0177331693ae?w=800&q=80&auto=format&fit=crop`,
+    // Açık pembe / ipek kumaş, sabahlık stili kadın fotoğrafı
+    image: `${UNSPLASH}/photo-1588117260148-b47818741c74?w=800&q=85&auto=format&fit=crop`,
     description: "Uzun ipek sabahlık, kemer bağcıklı. V yaka, derin dekolte. Pembe, siyah, şarap.",
     tags: ["sabahlık", "robe", "ipek", "pembe"],
   },
   {
-    title: "Polis Memuru Kostümü",
-    slug: "polis-memuru-kostumu",
+    title: "Deri Görünümlü Fantazi Kostüm",
+    slug: "deri-fantazi-kostum",
     price: 849,
     compareAtPrice: null,
     category: "fantazi-kostum",
-    image: `${UNSPLASH}/photo-1536243298747-ea8874136d64?w=800&q=80&auto=format&fit=crop`,
-    description: "Mavi mini polis kostümü. Kep, kemer ve kelepçe dahildir. S-XL.",
-    tags: ["kostüm", "polis", "fantazi", "mavi"],
+    // Siyah deri / latex görünümlü kostüm editorial fotoğrafı
+    image: `${UNSPLASH}/photo-1509631179647-0177331693ae?w=800&q=85&auto=format&fit=crop`,
+    description: "Siyah deri görünümlü mini elbise kostümü. Fermuarlı ön, kemer dahil. S-XL.",
+    tags: ["kostüm", "deri", "fantazi", "siyah"],
   },
   {
     title: "Kırmızı Dantel Jartiyer Set",
@@ -96,7 +103,8 @@ const sampleProducts = [
     price: 549,
     compareAtPrice: 749,
     category: "corap-aksesuar",
-    image: `${UNSPLASH}/photo-1469334031218-e382a71b716b?w=800&q=80&auto=format&fit=crop`,
+    // Kırmızı dantel iç giyim, jartiyer kemeri ile poz
+    image: `${UNSPLASH}/photo-1487222477894-8943e31ef7b2?w=800&q=85&auto=format&fit=crop`,
     description: "Dantel jartiyer kemeri + file çorap seti. Kırmızı, siyah, beyaz renk seçeneği.",
     tags: ["jartiyer", "dantel", "file çorap", "set"],
   },
