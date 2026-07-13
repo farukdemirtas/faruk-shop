@@ -25,6 +25,17 @@ const ProductSchema = z.object({
 
 export type ProductFormData = z.infer<typeof ProductSchema>;
 
+const VariantUpdateSchema = z.object({
+  id: z.string().optional(),
+  size: z.string().optional(),
+  color: z.string().optional(),
+  price: z.coerce.number().positive("Varyant fiyatı pozitif olmalıdır"),
+  inventory: z.coerce.number().int().min(0, "Stok negatif olamaz"),
+  sku: z.string().optional(),
+});
+
+export type VariantUpdateData = z.infer<typeof VariantUpdateSchema>;
+
 export async function createProduct(formData: ProductFormData) {
   const parsed = ProductSchema.safeParse(formData);
   if (!parsed.success) {
@@ -65,19 +76,109 @@ export async function createProduct(formData: ProductFormData) {
   }
 }
 
-export async function updateProduct(id: string, formData: Partial<ProductFormData>) {
-  try {
-    const product = await db.product.update({
+export async function updateProduct(
+  id: string,
+  formData: Partial<ProductFormData> & { variants?: VariantUpdateData[] }
+) {
+  const { variants, ...productFields } = formData;
+  const parsed = ProductSchema.partial().safeParse(productFields);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Geçersiz veri" };
+  }
+
+  if (variants) {
+    for (const variant of variants) {
+      const result = VariantUpdateSchema.safeParse(variant);
+      if (!result.success) {
+        return { success: false, error: result.error.issues[0]?.message ?? "Geçersiz varyant" };
+      }
+    }
+  }
+
+  const data = parsed.data;
+  let slugUpdate: string | undefined;
+
+  if (data.title) {
+    const current = await db.product.findUnique({
       where: { id },
-      data: {
-        ...formData,
-        status: formData.status as ProductStatus | undefined,
-        updatedAt: new Date(),
-      },
+      select: { slug: true, title: true },
+    });
+    if (current && current.title !== data.title) {
+      const newSlug = slugify(data.title);
+      const existing = await db.product.findFirst({
+        where: { slug: newSlug, id: { not: id } },
+      });
+      slugUpdate = existing ? `${newSlug}-${Date.now()}` : newSlug;
+    }
+  }
+
+  try {
+    const product = await db.$transaction(async (tx) => {
+      const updated = await tx.product.update({
+        where: { id },
+        data: {
+          ...data,
+          ...(slugUpdate ? { slug: slugUpdate } : {}),
+          status: data.status as ProductStatus | undefined,
+          categoryId: data.categoryId === "" ? null : data.categoryId,
+          collectionId: data.collectionId === "" ? null : data.collectionId,
+          updatedAt: new Date(),
+        },
+      });
+
+      if (variants) {
+        const existingIds = variants.map((v) => v.id).filter(Boolean) as string[];
+
+        await tx.productVariant.deleteMany({
+          where: {
+            productId: id,
+            ...(existingIds.length > 0 ? { id: { notIn: existingIds } } : {}),
+          },
+        });
+
+        for (let i = 0; i < variants.length; i++) {
+          const variant = variants[i];
+          const title = [variant.size, variant.color].filter(Boolean).join(" / ") || "Standart";
+
+          if (variant.id) {
+            await tx.productVariant.update({
+              where: { id: variant.id },
+              data: {
+                title,
+                size: variant.size || null,
+                color: variant.color || null,
+                price: variant.price,
+                inventory: variant.inventory,
+                sku: variant.sku || null,
+                position: i,
+              },
+            });
+          } else {
+            await tx.productVariant.create({
+              data: {
+                productId: id,
+                title,
+                size: variant.size || null,
+                color: variant.color || null,
+                price: variant.price,
+                inventory: variant.inventory,
+                sku: variant.sku || null,
+                position: i,
+              },
+            });
+          }
+        }
+      }
+
+      return updated;
     });
 
     revalidatePath("/admin/products");
-    revalidatePath(`/admin/products/${id}`);
+    revalidatePath(`/admin/products/${id}/edit`);
+    revalidatePath(`/products/${product.slug}`);
+    if (product.shopifyHandle) {
+      revalidatePath(`/products/${product.shopifyHandle}`);
+    }
     return { success: true, product };
   } catch {
     return { success: false, error: "Ürün güncellenirken hata oluştu" };

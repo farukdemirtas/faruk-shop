@@ -86,7 +86,7 @@ function buildUniqueSlug(title: string, externalId: string, existingSlug?: strin
   return `${base}-${externalId}`;
 }
 
-export async function pullProductsFromShopier() {
+export async function pullProductsFromShopier(selectedIds?: string[]) {
   const startTime = Date.now();
   const settings = await ensureShopierSettings();
 
@@ -107,7 +107,15 @@ export async function pullProductsFromShopier() {
   const errors: Array<{ productId: string; title: string; error: string }> = [];
 
   try {
-    const listing = await fetchShopierStoreListing(settings.storeUrl);
+    const allListing = await fetchShopierStoreListing(settings.storeUrl);
+    const selectedSet = selectedIds?.length ? new Set(selectedIds) : null;
+    const listing = selectedSet
+      ? allListing.filter((item) => selectedSet.has(item.id))
+      : allListing;
+
+    if (listing.length === 0) {
+      throw new Error("Aktarılacak ürün seçilmedi");
+    }
 
     await db.syncHistory.update({
       where: { id: syncRecord.id },
@@ -258,7 +266,7 @@ export async function pullProductsFromShopier() {
       data: {
         isConnected: true,
         lastConnectedAt: new Date(),
-        lastProductCount: listing.length,
+        lastProductCount: allListing.length,
         lastSyncAt: new Date(),
       },
     });
@@ -294,6 +302,54 @@ export async function pullProductsFromShopier() {
       failCount: 1,
       errors: [{ productId: "-", title: "Genel", error: (error as Error).message }],
       duration: Date.now() - startTime,
+    };
+  }
+}
+
+export async function listShopierStoreProducts() {
+  try {
+    const settings = await ensureShopierSettings();
+    const listing = await fetchShopierStoreListing(settings.storeUrl);
+
+    const imported = await db.product.findMany({
+      where: { shopifyId: { in: listing.map((item) => item.id) } },
+      select: { id: true, shopifyId: true, title: true },
+    });
+    const importedMap = new Map(
+      imported
+        .filter((item) => item.shopifyId)
+        .map((item) => [item.shopifyId as string, item]),
+    );
+
+    await db.shopierSettings.update({
+      where: { id: settings.id },
+      data: {
+        isConnected: listing.length > 0,
+        lastConnectedAt: new Date(),
+        lastProductCount: listing.length,
+      },
+    });
+
+    return {
+      success: true as const,
+      products: listing.map((item) => ({
+        ...item,
+        alreadyImported: importedMap.has(item.id),
+        localProductId: importedMap.get(item.id)?.id ?? null,
+        localTitle: importedMap.get(item.id)?.title ?? null,
+      })),
+      total: listing.length,
+      importedCount: importedMap.size,
+      storeUsername: settings.storeUsername,
+    };
+  } catch (error) {
+    return {
+      success: false as const,
+      error: (error as Error).message,
+      products: [],
+      total: 0,
+      importedCount: 0,
+      storeUsername: "",
     };
   }
 }
