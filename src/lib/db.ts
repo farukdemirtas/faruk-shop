@@ -22,27 +22,8 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-function getPrismaClient(): PrismaClient {
-  const cached = globalForPrisma.prisma;
+export const db = globalForPrisma.prisma ?? createPrismaClient();
 
-  if (cached && "shopierSettings" in cached) {
-    return cached;
-  }
-
-  if (cached) {
-    void cached.$disconnect().catch(() => {});
-    globalForPrisma.prisma = undefined;
-  }
-
-  const client = createPrismaClient();
-  globalForPrisma.prisma = client;
-  return client;
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = db;
 }
-
-export const db = new Proxy({} as PrismaClient, {
-  get(_target, prop) {
-    const client = getPrismaClient();
-    const value = client[prop as keyof PrismaClient];
-    return typeof value === "function" ? value.bind(client) : value;
-  },
-});
