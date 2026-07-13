@@ -1,6 +1,6 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
-/* ─── Design Tokens ─────────────────────────────────── */
+/* â”€â”€â”€ Design Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
   --pink:        #FF4FA3;
   --pink-dark:   #c2185b;
@@ -34,7 +34,7 @@
   --color-pink-pale:  var(--pink-pale);
 }
 
-/* ─── Reset ─────────────────────────────────────────── */
+/* â”€â”€â”€ Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
@@ -57,7 +57,7 @@ body {
   line-height: 1.6;
 }
 
-/* ─── Layout ─────────────────────────────────────────── */
+/* â”€â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .page-wrapper {
   width: 100%;
   min-height: 100vh;
@@ -67,24 +67,24 @@ body {
 .page-wrapper > * { width: 100%; }
 .page-wrapper > main { flex: 1; }
 
-/* ─── Scrollbar ──────────────────────────────────────── */
+/* â”€â”€â”€ Scrollbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 ::-webkit-scrollbar        { width: 5px; }
 ::-webkit-scrollbar-track  { background: transparent; }
 ::-webkit-scrollbar-thumb  { background: var(--pink-light); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--pink); }
 
-/* ─── Selection ──────────────────────────────────────── */
+/* â”€â”€â”€ Selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 ::selection { background: var(--pink-light); color: var(--dark); }
 
-/* ─── Focus ──────────────────────────────────────────── */
+/* â”€â”€â”€ Focus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
 
-/* ─── Transitions ────────────────────────────────────── */
+/* â”€â”€â”€ Transitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 a, button { transition: all 0.2s ease; }
 
 img { display: block; max-width: 100%; }
 
-/* ─── Section container ─────────────────────────────── */
+/* â”€â”€â”€ Section container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .container {
   width: 100%;
   max-width: 1280px;
@@ -96,7 +96,7 @@ img { display: block; max-width: 100%; }
 @media (min-width: 640px)  { .container { padding-left: 2rem; padding-right: 2rem; } }
 @media (min-width: 1024px) { .container { padding-left: 3rem; padding-right: 3rem; } }
 
-/* ─── Buttons ────────────────────────────────────────── */
+/* â”€â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -136,7 +136,7 @@ img { display: block; max-width: 100%; }
 }
 .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
 
-/* ─── Form — tema uyumlu select/input ──────────────── */
+/* â”€â”€â”€ Form â€” tema uyumlu select/input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .form-label {
   font-size: 0.78rem;
   color: var(--gray-500);
@@ -157,7 +157,7 @@ img { display: block; max-width: 100%; }
   font-weight: 500;
 }
 
-/* Custom location dropdown — pembe seçim, mavi yok */
+/* Custom location dropdown â€” pembe seÃ§im, mavi yok */
 .location-select {
   position: relative;
   width: 100%;
@@ -336,7 +336,7 @@ img { display: block; max-width: 100%; }
   color: var(--pink);
 }
 
-/* Checkout konum bloğu */
+/* Checkout konum bloÄŸu */
 .checkout-location-block {
   margin-top: 0.25rem;
   padding: 1rem;
@@ -384,7 +384,7 @@ img { display: block; max-width: 100%; }
   color: var(--gray-400);
 }
 
-/* ─── Badges ─────────────────────────────────────────── */
+/* â”€â”€â”€ Badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .badge-18 {
   display: inline-flex;
   align-items: center;
@@ -400,7 +400,7 @@ img { display: block; max-width: 100%; }
   text-transform: uppercase;
 }
 
-/* ─── Card ───────────────────────────────────────────── */
+/* â”€â”€â”€ Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .card {
   background: white;
   border-radius: var(--radius-lg);
@@ -411,7 +411,7 @@ img { display: block; max-width: 100%; }
 }
 .card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
 
-/* ─── Glass card ─────────────────────────────────────── */
+/* â”€â”€â”€ Glass card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .glass {
   background: rgba(255,255,255,0.06);
   backdrop-filter: blur(12px);
@@ -420,7 +420,7 @@ img { display: block; max-width: 100%; }
 }
 .glass:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,79,163,0.3); }
 
-/* ─── Section titles ─────────────────────────────────── */
+/* â”€â”€â”€ Section titles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .section-label {
   font-size: 0.7rem;
   font-weight: 700;
@@ -429,7 +429,7 @@ img { display: block; max-width: 100%; }
   color: var(--pink);
 }
 
-/* ─── Gradient text ──────────────────────────────────── */
+/* â”€â”€â”€ Gradient text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .text-gradient {
   background: linear-gradient(135deg, var(--pink) 0%, #ff8fd0 50%, var(--pink-light) 100%);
   -webkit-background-clip: text;
@@ -437,7 +437,7 @@ img { display: block; max-width: 100%; }
   background-clip: text;
 }
 
-/* ─── Banner grid responsive ────────────────────────── */
+/* â”€â”€â”€ Banner grid responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 768px) {
   .banner-grid {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -455,15 +455,15 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Banner hover ────────────────────────────────── */
+/* â”€â”€â”€ Banner hover â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .banner-card:hover .banner-img {
   transform: scale(1.05);
   opacity: 0.88 !important;
 }
 
-/* ══════════════════════════════════════════════════════
-   MOBILE RESPONSIVE — Genel kurallar
-   ══════════════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   MOBILE RESPONSIVE â€” Genel kurallar
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* Container mobile padding */
 @media (max-width: 640px) {
@@ -481,7 +481,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Main content offset (navbar + uyarı şeridi) ───── */
+/* â”€â”€â”€ Main content offset (navbar + uyarÄ± ÅŸeridi) â”€â”€â”€â”€â”€ */
 .main-content {
   padding-top: 93px;
 }
@@ -491,15 +491,107 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Navbar uyarı şeridi ────────────────────────────── */
+/* â”€â”€â”€ Navbar uyarÄ± ÅŸeridi â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .store-nav {
   top: 33px;
+  overflow: visible;
 }
 .top-bar-full { display: inline; }
 .top-bar-short { display: none; }
+
+.nav-desktop-links {
+  display: none;
+  align-items: center;
+  gap: 2px;
+}
+@media (min-width: 1024px) {
+  .nav-desktop-links {
+    display: flex;
+  }
+}
+
+.nav-mobile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+@media (min-width: 1024px) {
+  .nav-mobile-toggle {
+    display: none;
+  }
+}
+
+.nav-mobile-menu {
+  width: 100%;
+  background: white;
+  border-top: 1px solid #f0e0ea;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  max-height: calc(100dvh - var(--nav-offset, 108px));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nav-mobile-menu-inner {
+  padding: 12px 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nav-mobile-link {
+  display: block;
+  padding: 13px 14px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #374151;
+  background: transparent;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.nav-mobile-link.is-active {
+  font-weight: 600;
+  color: #FF4FA3;
+  background: #fff0f7;
+}
+.nav-mobile-link:active {
+  background: #ffe4f2;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.nav-bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  gap: 8px;
+  min-width: 0;
+}
+.nav-logo-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
 @media (max-width: 640px) {
   .store-nav {
     top: 48px !important;
+  }
+  :root {
+    --nav-offset: 108px;
   }
   .top-bar-full { display: none; }
   .top-bar-short { display: inline; }
@@ -507,15 +599,16 @@ img { display: block; max-width: 100%; }
     font-size: 9px !important;
     padding: 6px 10px !important;
     line-height: 1.4 !important;
+    min-height: 32px;
   }
   .nav-logo-text {
     font-size: 1rem !important;
   }
 }
 
-/* ─── Hero Slider ────────────────────────────────────── */
+/* â”€â”€â”€ Hero Slider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 768px) {
-  /* Hero yüksekliğini düşür */
+  /* Hero yÃ¼ksekliÄŸini dÃ¼ÅŸÃ¼r */
   .hero-slide-container {
     height: 55vh !important;
     min-height: 300px !important;
@@ -536,23 +629,23 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Homepage sections ──────────────────────────────── */
+/* â”€â”€â”€ Homepage sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 768px) {
-  /* İki kolonlu yatay banner */
+  /* Ä°ki kolonlu yatay banner */
   .dual-banner-grid {
     grid-template-columns: 1fr !important;
   }
-  /* Neden biz kartları */
+  /* Neden biz kartlarÄ± */
   .why-us-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.75rem !important;
   }
-  /* Ürün grid */
+  /* ÃœrÃ¼n grid */
   .product-grid-home {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.75rem !important;
   }
-  /* Section başlıklar */
+  /* Section baÅŸlÄ±klar */
   .section-header {
     flex-direction: column !important;
     align-items: flex-start !important;
@@ -565,7 +658,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Products page ──────────────────────────────────── */
+/* â”€â”€â”€ Products page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 1024px) {
   .products-layout {
     flex-direction: column !important;
@@ -575,7 +668,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Product detail ─────────────────────────────────── */
+/* â”€â”€â”€ Product detail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 768px) {
   .product-detail-grid {
     grid-template-columns: 1fr !important;
@@ -596,7 +689,7 @@ img { display: block; max-width: 100%; }
   .product-breadcrumb::-webkit-scrollbar { display: none; }
 }
 
-/* ─── Cart page ──────────────────────────────────────── */
+/* â”€â”€â”€ Cart page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 768px) {
   .cart-grid {
     grid-template-columns: 1fr !important;
@@ -606,7 +699,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Collections ────────────────────────────────────── */
+/* â”€â”€â”€ Collections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 640px) {
   .collections-grid {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -614,7 +707,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Footer ─────────────────────────────────────────── */
+/* â”€â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 640px) {
   .footer-grid {
     grid-template-columns: 1fr !important;
@@ -627,11 +720,11 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Scrollbar gizle (mobil chip row) ──────────────── */
+/* â”€â”€â”€ Scrollbar gizle (mobil chip row) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ─── Kargo şeridi ───────────────────────────────────── */
+/* â”€â”€â”€ Kargo ÅŸeridi â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 640px) {
   .features-strip {
     gap: 0.75rem !important;
@@ -647,7 +740,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Hero ok butonları ─────────────────────────────── */
+/* â”€â”€â”€ Hero ok butonlarÄ± â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 640px) {
   .hero-arrow {
     width: 34px !important;
@@ -660,7 +753,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Ürün kartı — dokunmatik cihazlarda hover yok ─── */
+/* â”€â”€â”€ ÃœrÃ¼n kartÄ± â€” dokunmatik cihazlarda hover yok â”€â”€â”€ */
 @media (hover: none) and (pointer: coarse) {
   .product-card-wishlist {
     opacity: 1 !important;
@@ -671,7 +764,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Ürün detay aksiyon butonları ─────────────────── */
+/* â”€â”€â”€ ÃœrÃ¼n detay aksiyon butonlarÄ± â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 480px) {
   .product-actions {
     flex-wrap: wrap !important;
@@ -685,7 +778,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Sepet ürün kartı ─────────────────────────────── */
+/* â”€â”€â”€ Sepet Ã¼rÃ¼n kartÄ± â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 480px) {
   .cart-item {
     flex-wrap: wrap !important;
@@ -699,7 +792,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Arama modalı mobil ───────────────────────────── */
+/* â”€â”€â”€ Arama modalÄ± mobil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 640px) {
   .search-modal {
     top: 0 !important;
@@ -713,7 +806,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Ürünler sayfası üst bar ──────────────────────── */
+/* â”€â”€â”€ ÃœrÃ¼nler sayfasÄ± Ã¼st bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 640px) {
   .products-top-bar {
     flex-direction: column !important;
@@ -728,7 +821,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── Section padding mobil ────────────────────────── */
+/* â”€â”€â”€ Section padding mobil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 640px) {
   .section-pad {
     padding-top: 2rem !important;
@@ -736,7 +829,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ─── WhatsApp float butonu ─────────────────────────── */
+/* â”€â”€â”€ WhatsApp float butonu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 640px) {
   .whatsapp-float {
     bottom: 18px !important;
@@ -744,13 +837,6 @@ img { display: block; max-width: 100%; }
     width: 52px !important;
     height: 52px !important;
   }
-}
-
-/* ─── Admin ──────────────────────────────────────────── */
-.admin-layout {
-  display: flex;
-  min-height: 100vh;
-  background: #f8f4f6;
 }
 
 /* ─── Animasyonlar (CSS only, JS framework yok) ──────── */

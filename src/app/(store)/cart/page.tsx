@@ -1,17 +1,18 @@
 "use client";
 
-import { ShoppingBag, ArrowLeft, Trash2, Plus, Minus, Package, Shield, RotateCcw, Tag, ChevronRight } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Trash2, Plus, Minus, Package, Shield, Tag, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { formatPrice } from "@/lib/utils";
 import { loadCart, saveCart, type CartItem } from "@/lib/cart-storage";
+import { BANNER_IMAGES } from "@/lib/banner-images";
 
 const DEMO_ITEMS: CartItem[] = [
   { id: "1", title: "Deri Seksi Gecelik", price: 1199, quantity: 1, size: "M", color: "Siyah",
-    image: "https://images.unsplash.com/photo-1551489186-cf8726f514f8?w=200&q=80&auto=format&fit=crop" },
+    image: BANNER_IMAGES.product.gecelik.replace("w=800", "w=200").replace("q=88", "q=80") },
   { id: "2", title: "Seksi Jartiyer Takım", price: 899, quantity: 2, size: "S",
-    image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=200&q=80&auto=format&fit=crop" },
+    image: BANNER_IMAGES.product.jartiyer.replace("w=800", "w=200").replace("q=88", "q=80") },
 ];
 
 export default function CartPage() {
@@ -313,7 +314,6 @@ export default function CartPage() {
                   {[
                     { icon: Shield, text: "Güvenli Ödeme" },
                     { icon: Package, text: "Gizli Paket" },
-                    { icon: RotateCcw, text: "14 Gün İade" },
                   ].map(({ icon: Icon, text }) => (
                     <div key={text} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, color: "#9ca3af" }}>
                       <Icon size={14} color="#FF4FA3" />

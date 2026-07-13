@@ -6,8 +6,8 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().min(1),
+  password: z.string().min(1),
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -28,10 +28,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const { email, password } = parsed.data;
+        const { email: identifier, password } = parsed.data;
 
-        const user = await db.user.findUnique({
-          where: { email },
+        const user = await db.user.findFirst({
+          where: {
+            OR: [
+              { email: identifier },
+              { name: { equals: identifier, mode: "insensitive" } },
+            ],
+          },
         });
 
         if (!user || !user.password || !user.isActive) return null;

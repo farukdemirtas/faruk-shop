@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAdminNav } from "@/components/admin/admin-shell";
 import {
   LayoutDashboard,
   Package,
@@ -19,162 +20,165 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  Flame,
+  ExternalLink,
+  X,
   Store,
+  Megaphone,
 } from "lucide-react";
-import { useState } from "react";
 
-const navItems = [
+type NavLink = {
+  type?: undefined;
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string; size?: number }>;
+  badge?: string;
+};
+
+type NavDivider = {
+  type: "divider";
+  label: string;
+};
+
+type NavItem = NavLink | NavDivider;
+
+const navItems: NavItem[] = [
+  { label: "Genel Bakış", href: "/admin", icon: LayoutDashboard },
+  { type: "divider", label: "Mağaza" },
+  { label: "Ürünler", href: "/admin/products", icon: Package },
+  { label: "Siparişler", href: "/admin/orders", icon: ShoppingCart },
+  { label: "Müşteriler", href: "/admin/customers", icon: Users },
+  { type: "divider", label: "Pazarlama" },
+  { label: "Bannerlar", href: "/admin/banners", icon: Image },
+  { label: "Kampanyalar", href: "/admin/campaigns", icon: Megaphone },
+  { label: "Kuponlar", href: "/admin/coupons", icon: Ticket },
+  { type: "divider", label: "Entegrasyon" },
   {
-    label: "Dashboard",
-    href: "/admin",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Shopify Senkronizasyonu",
+    label: "Shopify Sync",
     href: "/admin/shopify-sync",
     icon: RefreshCw,
-    badge: "Shopify",
+    badge: "API",
   },
-  { type: "divider", label: "Mağaza" },
-  {
-    label: "Ürün Yönetimi",
-    href: "/admin/products",
-    icon: Package,
-  },
-  {
-    label: "Siparişler",
-    href: "/admin/orders",
-    icon: ShoppingCart,
-  },
-  {
-    label: "Müşteriler",
-    href: "/admin/customers",
-    icon: Users,
-  },
-  { type: "divider", label: "Pazarlama" },
-  {
-    label: "Banner Yönetimi",
-    href: "/admin/banners",
-    icon: Image,
-  },
-  {
-    label: "Kampanyalar",
-    href: "/admin/campaigns",
-    icon: Sparkles,
-  },
-  {
-    label: "Kuponlar",
-    href: "/admin/coupons",
-    icon: Ticket,
-  },
-  { type: "divider", label: "Ayarlar" },
-  {
-    label: "Kargo Ayarları",
-    href: "/admin/shipping",
-    icon: Truck,
-  },
-  {
-    label: "Ödeme Ayarları",
-    href: "/admin/payments",
-    icon: CreditCard,
-  },
-  {
-    label: "Shopify Ayarları",
-    href: "/admin/settings",
-    icon: Settings,
-  },
-  {
-    label: "Kullanıcı Yönetimi",
-    href: "/admin/users",
-    icon: UserCog,
-  },
+  { type: "divider", label: "Sistem" },
+  { label: "Kargo", href: "/admin/shipping", icon: Truck },
+  { label: "Ödeme", href: "/admin/payments", icon: CreditCard },
+  { label: "Ayarlar", href: "/admin/settings", icon: Settings },
+  { label: "Kullanıcılar", href: "/admin/users", icon: UserCog },
 ];
 
-type NavItem = {
-  label: string;
-  href?: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  badge?: string;
-  type?: string;
-};
+function isActive(pathname: string, href: string) {
+  if (href === "/admin") return pathname === "/admin";
+  return pathname.startsWith(href);
+}
 
 export function AdminSidebar() {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const { mobileOpen, setMobileOpen, collapsed, setCollapsed } = useAdminNav();
 
   return (
-    <aside
-      className={cn(
-        "relative flex flex-col bg-[#1A1A2E] border-r border-white/5 transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+    <>
+      {/* Mobil overlay */}
+      {mobileOpen && (
+        <button
+          type="button"
+          className="admin-sidebar-overlay"
+          onClick={() => setMobileOpen(false)}
+          aria-label="Menüyü kapat"
+        />
       )}
-    >
-      {/* Logo */}
-      <div className={cn("flex items-center gap-3 p-4 border-b border-white/10", collapsed && "justify-center")}>
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FF4FA3] to-[#c2185b] flex items-center justify-center flex-shrink-0">
-          <Store className="w-5 h-5 text-white" />
-        </div>
-        {!collapsed && (
-          <div>
-            <p className="text-white font-bold text-sm leading-tight">Faruk Shop</p>
-            <p className="text-white/40 text-xs">Admin Panel</p>
-          </div>
+
+      <aside
+        className={cn(
+          "admin-sidebar",
+          collapsed && "is-collapsed",
+          mobileOpen && "is-mobile-open",
         )}
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
-        {(navItems as NavItem[]).map((item, i) => {
-          if (item.type === "divider") {
-            if (collapsed) return <div key={i} className="my-2 border-t border-white/10" />;
-            return (
-              <div key={i} className="px-3 pt-4 pb-1">
-                <p className="text-xs font-semibold text-white/30 uppercase tracking-wider">{item.label}</p>
-              </div>
-            );
-          }
-
-          const Icon = item.icon!;
-          const isActive = item.href === "/admin"
-            ? pathname === "/admin"
-            : pathname.startsWith(item.href!);
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href!}
-              title={collapsed ? item.label : undefined}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group",
-                isActive
-                  ? "bg-[#FF4FA3] text-white"
-                  : "text-white/60 hover:text-white hover:bg-white/10",
-                collapsed && "justify-center"
-              )}
-            >
-              <Icon className={cn("w-5 h-5 flex-shrink-0", isActive ? "text-white" : "text-white/60 group-hover:text-white")} />
-              {!collapsed && (
-                <>
-                  <span className="flex-1">{item.label}</span>
-                  {item.badge && (
-                    <span className="text-xs bg-[#FFD6E8] text-[#FF4FA3] px-1.5 py-0.5 rounded-md font-semibold">
-                      {item.badge}
-                    </span>
-                  )}
-                </>
-              )}
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Collapse Toggle */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 w-6 h-6 bg-[#1A1A2E] border border-white/20 rounded-full flex items-center justify-center text-white/60 hover:text-white transition-colors"
       >
-        {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
-      </button>
-    </aside>
+        {/* Logo */}
+        <div className="admin-sidebar-head">
+          <Link href="/admin" className="admin-sidebar-brand" onClick={() => setMobileOpen(false)}>
+            <div className="admin-sidebar-logo">
+              <Flame size={18} color="white" />
+            </div>
+            {!collapsed && (
+              <div>
+                <p className="admin-sidebar-title">Faruk<span>Shop</span></p>
+                <p className="admin-sidebar-sub">Yönetim Paneli</p>
+              </div>
+            )}
+          </Link>
+          <button
+            type="button"
+            className="admin-sidebar-close"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Menüyü kapat"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Nav */}
+        <nav className="admin-sidebar-nav">
+          {navItems.map((item, i) => {
+            if (item.type === "divider") {
+              if (collapsed) {
+                return <div key={`d-${i}`} className="admin-sidebar-divider-line" />;
+              }
+              return (
+                <p key={`d-${i}`} className="admin-sidebar-section">
+                  {item.label}
+                </p>
+              );
+            }
+
+            const Icon = item.icon;
+            const active = isActive(pathname, item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                title={collapsed ? item.label : undefined}
+                onClick={() => setMobileOpen(false)}
+                className={cn("admin-sidebar-link", active && "is-active")}
+              >
+                <span className="admin-sidebar-link-icon">
+                  <Icon size={18} />
+                </span>
+                {!collapsed && (
+                  <>
+                    <span className="admin-sidebar-link-label">{item.label}</span>
+                    {item.badge && (
+                      <span className="admin-sidebar-badge">{item.badge}</span>
+                    )}
+                  </>
+                )}
+                {active && <span className="admin-sidebar-active-bar" />}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="admin-sidebar-foot">
+          {!collapsed && (
+            <Link href="/" target="_blank" className="admin-sidebar-store">
+              <Store size={15} />
+              Mağazayı Görüntüle
+              <ExternalLink size={12} />
+            </Link>
+          )}
+          <button
+            type="button"
+            className="admin-sidebar-collapse"
+            onClick={() => setCollapsed(!collapsed)}
+            aria-label={collapsed ? "Menüyü genişlet" : "Menüyü daralt"}
+          >
+            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            {!collapsed && <span>Daralt</span>}
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

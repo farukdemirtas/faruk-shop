@@ -31,6 +31,13 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
 
   useEffect(() => { setOpen(false); }, [pathname]);
 
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
+
   return (
     <>
       {/* +18 uyarı şeridi */}
@@ -75,9 +82,9 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
         borderBottom: scrolled ? "1px solid #f0e0ea" : "1px solid rgba(240,224,234,0.5)",
         boxShadow: scrolled ? "0 4px 24px rgba(0,0,0,0.08)" : "none",
       }}>
-        <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "60px" }}>
+        <div className="container nav-bar-row">
           {/* Logo */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", flexShrink: 0 }}>
+          <Link href="/" className="nav-logo-link">
             <div style={{
               width: 36, height: 36,
               borderRadius: 10,
@@ -93,7 +100,7 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
           </Link>
 
           {/* Desktop links */}
-          <div style={{ display: "flex", alignItems: "center", gap: "2px" }} className="hidden lg:flex">
+          <div className="nav-desktop-links">
             {links.map((l) => {
               const active = pathname === l.href;
               return (
@@ -115,7 +122,7 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
           </div>
 
           {/* Actions */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <div className="nav-actions">
             {/* Arama */}
             <button onClick={() => setSearchOpen(true)} style={{
               width: 38, height: 38, borderRadius: 10, border: "none",
@@ -170,17 +177,13 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
               )}
             </Link>
             <button
-              className="lg:hidden"
+              className="nav-mobile-toggle"
               onClick={() => setOpen(!open)}
+              aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
+              aria-expanded={open}
               style={{
-                width: 38, height: 38,
-                borderRadius: 10,
-                border: "none",
                 background: open ? "#fff0f7" : "transparent",
                 color: open ? "#FF4FA3" : "#374151",
-                cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                marginLeft: 4,
               }}
             >
               {open ? <X size={20} /> : <Menu size={20} />}
@@ -190,29 +193,12 @@ export function Navbar({ cartCount = 0 }: { cartCount?: number }) {
 
         {/* Mobile menu */}
         {open && (
-          <div style={{
-            width: "100%",
-            background: "white",
-            borderTop: "1px solid #f0e0ea",
-            padding: "12px 0 16px",
-            boxShadow: "0 12px 32px rgba(0,0,0,0.1)",
-          }}>
-            <div className="container">
+          <div className="nav-mobile-menu">
+            <div className="container nav-mobile-menu-inner">
               {links.map((l) => {
                 const active = pathname === l.href;
                 return (
-                  <Link key={l.href} href={l.href} style={{
-                    display: "block",
-                    padding: "12px 14px",
-                    borderRadius: 12,
-                    fontSize: "0.9rem",
-                    fontWeight: active ? 600 : 500,
-                    color: active ? "#FF4FA3" : "#374151",
-                    background: active ? "#fff0f7" : "transparent",
-                    textDecoration: "none",
-                    marginBottom: 2,
-                    transition: "all 0.15s",
-                  }}>
+                  <Link key={l.href} href={l.href} className={`nav-mobile-link${active ? " is-active" : ""}`}>
                     {l.label}
                   </Link>
                 );

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ShoppingBag, Heart, Share2, Truck, RotateCcw, Shield, Package, ChevronRight, Check, Minus, Plus, Sparkles, Copy, CheckCheck } from "lucide-react";
+import { ShoppingBag, Heart, Share2, Truck, Shield, Package, ChevronRight, Check, Minus, Plus, Sparkles, Copy, CheckCheck } from "lucide-react";
 import { ProductCard, ProductCardData } from "@/components/store/product-card";
 
 /* ── formatPrice yardımcısı (utils import yerine inline) ── */
@@ -376,11 +376,10 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Özellikler */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem" }}>
               {[
                 { icon: Truck,     title: "Ücretsiz Kargo", sub: "500₺ üzeri" },
                 { icon: Package,   title: "Gizli Paket",    sub: "İçerik gizli" },
-                { icon: RotateCcw, title: "14 Gün İade",    sub: "Kolay iade" },
               ].map(({ icon: Icon, title, sub }) => (
                 <div key={title} style={{
                   display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",

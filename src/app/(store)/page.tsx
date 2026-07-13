@@ -5,7 +5,7 @@ import { getAllCollectionCoverImages } from "@/lib/collection-images";
 
 import { HeroSlider } from "@/components/store/hero-slider";
 import Link from "next/link";
-import { ArrowRight, Package, Lock, Shield, Truck, Sparkles, RotateCcw, Flame } from "lucide-react";
+import { ArrowRight, Package, Lock, Shield, Truck, Sparkles, Flame } from "lucide-react";
 
 export const revalidate = 60;
 
@@ -110,7 +110,6 @@ export default async function HomePage() {
             {[
               { icon: Truck,     text: "600 TL Üzeri Kargo Ücretsiz" },
               { icon: Package,   text: "Gizli Paket Teslimat" },
-              { icon: RotateCcw, text: "14 Gün İade Hakkı" },
               { icon: Shield,    text: "Güvenli & Gizli Ödeme" },
             ].map(({ icon: Icon, text }) => (
               <div key={text} style={{ display: "flex", alignItems: "center", gap: 7, color: "white", fontSize: "0.8rem", fontWeight: 500 }}>
