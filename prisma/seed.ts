@@ -224,7 +224,6 @@ async function main() {
         status: "ACTIVE",
         ...(catId ? { category: { connect: { id: catId } } } : {}),
         tags: p.tags,
-        inventory: Math.floor(Math.random() * 50) + 10,
       },
     });
     await prisma.productImage.create({
